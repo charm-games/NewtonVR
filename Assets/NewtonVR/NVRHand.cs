@@ -8,13 +8,13 @@ namespace NewtonVR
 {
     public class NVRHand : MonoBehaviour
     {
-        public NVRButtons HoldButton = NVRButtons.Grip;
+        public NVRButtons HoldButton = NVRButtons.Trigger;
         public bool HoldButtonDown = false;
         public bool HoldButtonUp = false;
         public bool HoldButtonPressed = false;
         public float HoldButtonAxis = 0f;
 
-        public NVRButtons UseButton = NVRButtons.Trigger;
+        public NVRButtons UseButton = NVRButtons.Grip;
         public bool UseButtonDown = false;
         public bool UseButtonUp = false;
         public bool UseButtonPressed = false;
@@ -42,7 +42,7 @@ namespace NewtonVR
         private VisibilityLevel CurrentVisibility = VisibilityLevel.Visible;
         private bool VisibilityLocked = false;
 
-        private HandState CurrentHandState = HandState.Uninitialized;
+        protected HandState CurrentHandState = HandState.Uninitialized;
 
         private Dictionary<NVRInteractable, Dictionary<Collider, float>> CurrentlyHoveringOver;
 
@@ -257,17 +257,6 @@ namespace NewtonVR
                 button.NearTouchDown = InputDevice.GetNearTouchDown(nvrbutton);
                 button.NearTouchUp = InputDevice.GetNearTouchUp(nvrbutton);
                 button.IsNearTouched = InputDevice.GetNearTouch(nvrbutton);
-            }
-
-            HoldButtonPressed = Inputs[HoldButton].IsPressed;
-            HoldButtonDown = Inputs[HoldButton].PressDown;
-            HoldButtonUp = Inputs[HoldButton].PressUp;
-            HoldButtonAxis = Inputs[HoldButton].SingleAxis;
-
-            UseButtonPressed = Inputs[UseButton].IsPressed;
-            UseButtonDown = Inputs[UseButton].PressDown;
-            UseButtonUp = Inputs[UseButton].PressUp;
-            UseButtonAxis = Inputs[UseButton].SingleAxis;
         }
 
         protected void UpdateInteractions()
@@ -319,6 +308,31 @@ namespace NewtonVR
                         VisibilityLocked = false;
                     }
                 }
+        protected virtual void UpdateControllerState()
+        {
+            foreach (var button in Inputs)
+            {
+                button.Value.Axis = Controller.GetAxis(button.Key);
+                button.Value.SingleAxis = button.Value.Axis.x;
+                button.Value.PressDown = Controller.GetPressDown(button.Key);
+                button.Value.PressUp = Controller.GetPressUp(button.Key);
+                button.Value.IsPressed = Controller.GetPress(button.Key);
+                button.Value.TouchDown = Controller.GetTouchDown(button.Key);
+                button.Value.TouchUp = Controller.GetTouchUp(button.Key);
+                button.Value.IsTouched = Controller.GetTouch(button.Key);
+            }
+
+            HoldButtonPressed = Inputs[HoldButton].IsPressed;
+            HoldButtonDown = Inputs[HoldButton].PressDown;
+            HoldButtonUp = Inputs[HoldButton].PressUp;
+            HoldButtonAxis = Inputs[HoldButton].SingleAxis;
+
+            UseButtonPressed = Inputs[UseButton].IsPressed;
+            UseButtonDown = Inputs[UseButton].PressDown;
+            UseButtonUp = Inputs[UseButton].PressUp;
+            UseButtonAxis = Inputs[UseButton].SingleAxis;
+        }
+
             }
             else if (CurrentInteractionStyle == InterationStyle.ByScript)
             {
@@ -645,6 +659,14 @@ namespace NewtonVR
         {
             return InputDevice.SetupDefaultPhysicalColliders(ModelParent);
         }
+        
+        protected void SetDeviceIndex(int index)
+        {
+            DeviceIndex = index;
+            Controller = SteamVR_Controller.Input(index);
+            StartCoroutine(DoInitialize());
+        }
+
 
         public void DeregisterInteractable(NVRInteractable interactable)
         {
