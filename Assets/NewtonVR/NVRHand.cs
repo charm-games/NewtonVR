@@ -672,8 +672,6 @@ namespace NewtonVR
             if (renderModel != null) {
                 UpdateRenderModelLoadState(renderModel);
             }
-
-            StartCoroutine(DoInitialize());
         }
 
 
