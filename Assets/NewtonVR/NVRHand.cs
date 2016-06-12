@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Events;
 
 namespace NewtonVR
 {
@@ -62,6 +63,11 @@ namespace NewtonVR
         private NVRInputDevice InputDevice;
 
         private GameObject RenderModel;
+
+        /**
+         * Event triggered once DoInitialize is complete
+         */
+        private UnityEvent onInitialized;
 
         public bool IsHovering
         {
@@ -853,6 +859,9 @@ namespace NewtonVR
             }
 
             CurrentHandState = HandState.Idle;
+
+            // Signal we are initialized
+            onInitialized.Invoke();
         }
 
         public void ForceGhost()
@@ -860,6 +869,16 @@ namespace NewtonVR
             SetVisibility(VisibilityLevel.Ghost);
             PhysicalController.Off();
         }
+        }
+
+        public void AddOnInitializedListener(UnityAction callback)
+        {
+            onInitialized.AddListener(callback);
+        }
+
+        public void RemoveOnInitializedListener(UnityAction callback)
+        {
+            onInitialized.RemoveListener(callback);
     }
     
     public enum VisibilityLevel
