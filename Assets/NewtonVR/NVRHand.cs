@@ -891,6 +891,11 @@ namespace NewtonVR
         {
             onInitialized.RemoveListener(callback);
     }
+
+        void OnDestroy()
+        {
+            SteamVR_Utils.Event.Remove("render_model_loaded", RenderModelLoaded);
+        }
     
     public enum VisibilityLevel
     {
