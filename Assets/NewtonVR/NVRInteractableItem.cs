@@ -98,7 +98,6 @@ namespace NewtonVR
                     VelocityHistory[CurrentVelocityHistoryStep] = this.Rigidbody.velocity;
                     AngularVelocityHistory[CurrentVelocityHistoryStep] = this.Rigidbody.angularVelocity;
                 }
-            }
         }
 
         protected virtual void AddExternalVelocities()
