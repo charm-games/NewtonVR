@@ -16,15 +16,26 @@ namespace NewtonVR
             this.Rigidbody.maxAngularVelocity = 100f;
         }
 
+        //NVK:  Added by charm games to get rid of object
+        //ossilation when object is grabbed.
+        protected virtual bool ShouldApplyRotationForce()
+        {
+            return (IsAttached == true);
+        }
+
+        protected virtual void ApplyRotationalForce()
+        {
+            Vector3 PositionDelta = (AttachedHand.transform.position - InitialAttachPoint.position) * DeltaMagic;
+            this.Rigidbody.AddForceAtPosition(PositionDelta, InitialAttachPoint.position, ForceMode.VelocityChange);
+        }
+
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
 
-            if (IsAttached == true)
+            if (ShouldApplyRotationForce())
             {
-                Vector3 PositionDelta = (AttachedHand.transform.position - InitialAttachPoint.position) * DeltaMagic;
-
-                this.Rigidbody.AddForceAtPosition(PositionDelta, InitialAttachPoint.position, ForceMode.VelocityChange);
+                ApplyRotationalForce();
             }
 
             CurrentAngle = this.transform.localEulerAngles.z;
