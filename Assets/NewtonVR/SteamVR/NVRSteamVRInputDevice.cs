@@ -212,6 +212,24 @@ namespace NewtonVR
         {
             DeviceIndex = index;
             Controller = SteamVR_Controller.Input(index);
+
+            // Ensure the render model gets updated to avoid any race conditions
+            // between this call and the render_model_loaded event
+            SteamVR_RenderModel renderModel = this.GetComponentInChildren<SteamVR_RenderModel>();
+
+            if (renderModel != null) {
+                UpdateRenderModelLoadState(renderModel);
+            }
+        }
+
+        /*
+         * Added by Charm Games
+        */
+        private void UpdateRenderModelLoadState(SteamVR_RenderModel renderModel)
+        {
+            if ((int)renderModel.index == DeviceIndex) {
+                RenderModelInitialized = true;
+            }
         }
 
         public override string GetDeviceName()

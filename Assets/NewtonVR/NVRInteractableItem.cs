@@ -80,12 +80,7 @@ namespace NewtonVR
                 }
 
                 Vector3 VelocityTarget = (PositionDelta * VelocityMagic) * Time.fixedDeltaTime;
-                if (float.IsNaN(VelocityTarget.x) == false)
-                {
-                    this.Rigidbody.velocity = Vector3.MoveTowards(this.Rigidbody.velocity, VelocityTarget, MaxVelocityChange);
-                }
-
-                AddExternalVelocities();
+                UpdateRigidBodyVelocity(VelocityTarget);
 
                 if (VelocityHistory != null)
                 {
@@ -98,7 +93,21 @@ namespace NewtonVR
                     VelocityHistory[CurrentVelocityHistoryStep] = this.Rigidbody.velocity;
                     AngularVelocityHistory[CurrentVelocityHistoryStep] = this.Rigidbody.angularVelocity;
                 }
+            }
         }
+
+        /**
+         * Constrain grabbed object velocity when appropriate
+         */
+        protected virtual void UpdateRigidBodyVelocity(Vector3 argVelocityTarget)
+        {
+            if (float.IsNaN(argVelocityTarget.x) == false)
+            {
+                this.Rigidbody.velocity = Vector3.MoveTowards(this.Rigidbody.velocity, argVelocityTarget, MaxVelocityChange);
+            }
+            AddExternalVelocities();
+        }
+
 
         protected virtual void AddExternalVelocities()
         {

@@ -204,6 +204,9 @@ namespace NewtonVR
             }
             
 
+            // Initialize events
+            onInitialized = new UnityEvent();
+
             InputDevice.Initialize(this);
             InitializeRenderModel();
         }
@@ -272,7 +275,7 @@ namespace NewtonVR
             }
         }
 
-        protected void UpdateButtonStates()
+        protected virtual void UpdateButtonStates()
         {
             for (int index = 0; index < NVRButtonsHelper.Array.Length; index++)
             {
@@ -289,6 +292,7 @@ namespace NewtonVR
                 button.NearTouchDown = InputDevice.GetNearTouchDown(nvrbutton);
                 button.NearTouchUp = InputDevice.GetNearTouchUp(nvrbutton);
                 button.IsNearTouched = InputDevice.GetNearTouch(nvrbutton);
+            }
         }
 
         protected void UpdateInteractions()
@@ -340,6 +344,19 @@ namespace NewtonVR
                         VisibilityLocked = false;
                     }
                 }
+            }
+            else if (CurrentInteractionStyle == InterationStyle.ByScript)
+            {
+                //this is handled by user customized scripts.
+            }
+
+            if (IsInteracting == true)
+            {
+                CurrentlyInteracting.InteractingUpdate(this);
+            }
+        }
+
+        /*  NVK:  KILL ME?
         protected virtual void UpdateControllerState()
         {
             foreach (var button in Inputs)
@@ -364,19 +381,7 @@ namespace NewtonVR
             UseButtonUp = Inputs[UseButton].PressUp;
             UseButtonAxis = Inputs[UseButton].SingleAxis;
         }
-
-            }
-            else if (CurrentInteractionStyle == InterationStyle.ByScript)
-            {
-                //this is handled by user customized scripts.
-            }
-
-            if (IsInteracting == true)
-            {
-                CurrentlyInteracting.InteractingUpdate(this);
-            }
-        }
-
+        */
         private void UpdateVisibilityAndColliders()
         {
             if (Player.PhysicalHands == true)
@@ -717,25 +722,9 @@ namespace NewtonVR
         }
 
         public Collider[] SetupDefaultPhysicalColliders(Transform ModelParent)
-
         {
             return InputDevice.SetupDefaultPhysicalColliders(ModelParent);
         }
-        
-        protected void SetDeviceIndex(int index)
-        {
-            DeviceIndex = index;
-            Controller = SteamVR_Controller.Input(index);
-
-            // Ensure the render model gets updated to avoid any race conditions
-            // between this call and the render_model_loaded event
-            SteamVR_RenderModel renderModel = this.GetComponentInChildren<SteamVR_RenderModel>();
-
-            if (renderModel != null) {
-                UpdateRenderModelLoadState(renderModel);
-            }
-        }
-
 
         public void DeregisterInteractable(NVRInteractable interactable)
         {
@@ -834,13 +823,6 @@ namespace NewtonVR
             }
         }
  
-        private void UpdateRenderModelLoadState(SteamVR_RenderModel renderModel)
-        {
-            if ((int)renderModel.index == DeviceIndex) {
-                RenderModelInitialized = true;
-            }
-        }
-        
         public void Initialize()
         {
             Rigidbody = this.GetComponent<Rigidbody>();
@@ -878,7 +860,7 @@ namespace NewtonVR
                     Color transparentcolor = Color.white;
                     transparentcolor.a = (float)VisibilityLevel.Ghost / 100f;
 
-                GhostRenderers = this.GetComponentsInChildren<MeshRenderer>();
+                    GhostRenderers = this.GetComponentsInChildren<MeshRenderer>();
                     for (int rendererIndex = 0; rendererIndex < GhostRenderers.Length; rendererIndex++)
                     {
                         NVRHelpers.SetTransparent(GhostRenderers[rendererIndex].material, transparentcolor);
@@ -899,7 +881,7 @@ namespace NewtonVR
                     Color transparentcolor = Color.white;
                     transparentcolor.a = (float)VisibilityLevel.Ghost / 100f;
 
-                GhostRenderers = this.GetComponentsInChildren<MeshRenderer>();
+                    GhostRenderers = this.GetComponentsInChildren<MeshRenderer>();
                     for (int rendererIndex = 0; rendererIndex < GhostRenderers.Length; rendererIndex++)
                     {
                         NVRHelpers.SetTransparent(GhostRenderers[rendererIndex].material, transparentcolor);
@@ -925,7 +907,6 @@ namespace NewtonVR
             SetVisibility(VisibilityLevel.Ghost);
             PhysicalController.Off();
         }
-        }
 
         public void AddOnInitializedListener(UnityAction callback)
         {
@@ -935,13 +916,9 @@ namespace NewtonVR
         public void RemoveOnInitializedListener(UnityAction callback)
         {
             onInitialized.RemoveListener(callback);
+        }
     }
 
-        void OnDestroy()
-        {
-            SteamVR_Utils.Event.Remove("render_model_loaded", RenderModelLoaded);
-        }
-    
     public enum VisibilityLevel
     {
         Invisible = 0,
