@@ -732,6 +732,9 @@ namespace NewtonVR
                         break;
 
                     default:
+                        // As a fallback use the colliders on the hand object
+                        Collider defaultCollider = GetComponent<SphereCollider>();
+                        Colliders = new Collider[] { defaultCollider };
                         Debug.LogError("Error. Unsupported device type: " + controllerModel);
                         break;
                 }
