@@ -21,6 +21,10 @@ namespace NewtonVR
         protected Collider[] Colliders;
         protected Vector3 ClosestHeldPoint;
 
+        [Tooltip("If true, all colliders under this object's hierarchy will " + 
+                 "be mapped for picking up this object. Otherwise only the " + 
+                 "colliders on this object will be used")]
+        public bool IncludeChildColliders = true;
         
 
         public virtual bool IsAttached
@@ -48,7 +52,11 @@ namespace NewtonVR
                 Debug.LogError("There is no rigidbody attached to this interactable.");
             }
 
-            Colliders = this.GetComponentsInChildren<Collider>();
+            if (IncludeChildColliders) {
+                Colliders = this.GetComponentsInChildren<Collider>();
+            } else {
+                Colliders = this.GetComponents<Collider>();
+            }
         }
 
         protected virtual void Start()
