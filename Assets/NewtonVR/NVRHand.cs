@@ -733,7 +733,9 @@ namespace NewtonVR
 
                     default:
                         // As a fallback use the colliders on the hand object
-                        Collider defaultCollider = GetComponent<SphereCollider>();
+                        SphereCollider defaultCollider = GetComponent<SphereCollider>();
+                        // HACK: Temporary hack for oculus controller
+                        defaultCollider.center = new Vector3(0f, -0.03f, -0.08f);
                         Colliders = new Collider[] { defaultCollider };
                         Debug.LogError("Error. Unsupported device type: " + controllerModel);
                         break;
