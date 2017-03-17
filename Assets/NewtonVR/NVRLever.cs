@@ -4,7 +4,7 @@ using System;
 
 namespace NewtonVR
 {
-    public class NVRLever : NVRInteractable
+    public class NVRLever : NVRInteractableItem
     {
         public float LastValue;
         public float CurrentValue;
@@ -39,18 +39,6 @@ namespace NewtonVR
             if (HingeJoint.useLimits)
             {
                 AngleRange = (Mathf.Max(HingeJoint.limits.max, HingeJoint.limits.min) - Mathf.Min(HingeJoint.limits.max, HingeJoint.limits.min));
-            }
-        }
-
-        protected override void FixedUpdate()
-        {
-            base.FixedUpdate();
-
-            if (IsAttached == true)
-            {
-                Vector3 PositionDelta = (AttachedHand.transform.position - InitialAttachPoint.position) * DeltaMagic;
-
-                this.Rigidbody.AddForceAtPosition(PositionDelta, InitialAttachPoint.position, ForceMode.VelocityChange);
             }
         }
 

@@ -21,12 +21,6 @@ namespace NewtonVR
         protected Collider[] Colliders;
         protected Vector3 ClosestHeldPoint;
 
-        [Tooltip("If true, all colliders under this object's hierarchy will " + 
-                 "be mapped for picking up this object. Otherwise only the " + 
-                 "colliders on this object will be used")]
-        public bool IncludeChildColliders = true;
-        
-
         public virtual bool IsAttached
         {
             get
@@ -51,43 +45,50 @@ namespace NewtonVR
             {
                 Debug.LogError("There is no rigidbody attached to this interactable.");
             }
-
-            if (IncludeChildColliders) {
-                Colliders = this.GetComponentsInChildren<Collider>();
-            } else {
-                Colliders = this.GetComponents<Collider>();
-            }
         }
 
         protected virtual void Start()
         {
+            UpdateColliders();
+        }
+
+        public virtual void ResetInteractable()
+        {
+            Awake();
+            Start();
+            AttachedHand = null;
+        }
+
+        public virtual void UpdateColliders()
+        {
+            Colliders = this.GetComponentsInChildren<Collider>();
             NVRInteractables.Register(this, Colliders);
         }
 
-        protected virtual void FixedUpdate()
+        protected virtual bool CheckForDrop()
         {
-            if (IsAttached == true)
+            float shortestDistance = float.MaxValue;
+
+            for (int index = 0; index < Colliders.Length; index++)
             {
-                float shortestDistance = float.MaxValue;
+                //todo: this does not do what I think it does.
+                Vector3 closest = Colliders[index].ClosestPointOnBounds(AttachedHand.transform.position);
+                float distance = Vector3.Distance(AttachedHand.transform.position, closest);
 
-                for (int index = 0; index < Colliders.Length; index++)
+                if (distance < shortestDistance)
                 {
-                    //todo: this does not do what I think it does.
-                    Vector3 closest = Colliders[index].ClosestPointOnBounds(AttachedHand.transform.position);
-                    float distance = Vector3.Distance(AttachedHand.transform.position, closest);
-
-                    if (distance < shortestDistance)
-                    {
-                        shortestDistance = distance;
-                        ClosestHeldPoint = closest;
-                    }
-                }
-
-                if (shortestDistance > DropDistance)
-                {
-                    DroppedBecauseOfDistance();
+                    shortestDistance = distance;
+                    ClosestHeldPoint = closest;
                 }
             }
+
+            if (DropDistance != -1 && AttachedHand.CurrentInteractionStyle != InterationStyle.ByScript && shortestDistance > DropDistance)
+            {
+                DroppedBecauseOfDistance();
+                return true;
+            }
+
+            return false;
         }
 
         //Remove items that go too high or too low.
@@ -123,6 +124,11 @@ namespace NewtonVR
             {
                 UseButtonDown();
             }
+        }
+
+        public virtual void HoveringUpdate(NVRHand hand, float forTime)
+        {
+
         }
 
         public void ForceDetach()
@@ -173,6 +179,17 @@ namespace NewtonVR
         public virtual void UseButtonDown()
         {
 
+        }
+
+
+        public virtual void AddExternalVelocity(Vector3 velocity)
+        {
+            Rigidbody.AddForce(velocity, ForceMode.VelocityChange);
+        }
+
+        public virtual void AddExternalAngularVelocity(Vector3 angularVelocity)
+        {
+            Rigidbody.AddTorque(angularVelocity, ForceMode.VelocityChange);
         }
 
         protected virtual void OnDestroy()
