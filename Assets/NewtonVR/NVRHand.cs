@@ -71,7 +71,7 @@ namespace NewtonVR
         private Collider[] GhostColliders;
         private Renderer[] GhostRenderers;
 
-        private NVRInputDevice InputDevice;
+        protected NVRInputDevice InputDevice;
 
         private GameObject RenderModel;
 

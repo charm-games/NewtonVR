@@ -138,7 +138,7 @@ namespace NewtonVR
         [HideInInspector]
         public NVRSDKIntegrations CurrentIntegrationType = NVRSDKIntegrations.None;
 
-        private NVRIntegration Integration;
+        protected NVRIntegration Integration;
 
         private Dictionary<Collider, NVRHand> ColliderToHandMapping;
 
@@ -214,7 +214,8 @@ namespace NewtonVR
             {
                 if (logOutput == true)
                 {
-                    Debug.LogError("[NewtonVR] Fallback non-vr not yet implemented.");
+                    //Debug.LogError("[NewtonVR] Fallback non-vr not yet implemented.");
+                    SetupFallbackNonVRIntegration();
                 }
                 return;
             }
@@ -228,7 +229,12 @@ namespace NewtonVR
             }
         }
 
-        private NVRSDKIntegrations DetermineCurrentIntegration(bool logOutput = true)
+        protected virtual void SetupFallbackNonVRIntegration()
+        {
+            // Override this in your custom rig implementation
+        }
+
+        protected virtual NVRSDKIntegrations DetermineCurrentIntegration(bool logOutput = true)
         {
             NVRSDKIntegrations currentIntegration = NVRSDKIntegrations.None;
             string resultLog = "[NewtonVR] Version : " + NewtonVRVersion + ". ";
