@@ -41,7 +41,7 @@ namespace NewtonVR
         [HideInInspector]
         public GameObject CustomPhysicalColliders;
 
-        private VisibilityLevel CurrentVisibility = VisibilityLevel.Visible;
+        protected VisibilityLevel CurrentVisibility = VisibilityLevel.Visible;
         private bool VisibilityLocked = false;
 
         [HideInInspector]
@@ -69,11 +69,11 @@ namespace NewtonVR
         public NVRPhysicalController PhysicalController;
 
         private Collider[] GhostColliders;
-        private Renderer[] GhostRenderers;
+        protected Renderer[] GhostRenderers;
 
         protected NVRInputDevice InputDevice;
 
-        private GameObject RenderModel;
+        protected GameObject RenderModel;
 
         public bool IsHovering
         {
@@ -830,7 +830,7 @@ namespace NewtonVR
             }
         }
 
-        public void Initialize()
+        public virtual void Initialize()
         {
             Rigidbody = this.GetComponent<Rigidbody>();
             if (Rigidbody == null)
