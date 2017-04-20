@@ -326,7 +326,7 @@ namespace NewtonVR
                     VisibilityLocked = false;
                 }
 
-                if (HoldButtonDown == true || HoldButtonPressed == true)
+                if (HoldButtonDown == true)
                 {
                     if (CurrentlyInteracting == null)
                     {
