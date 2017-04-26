@@ -335,7 +335,7 @@ namespace NewtonVR
                 }
                 else if (HoldButtonUp == true && CurrentlyInteracting != null)
                 {
-                    EndInteraction(null);
+                    EndInteraction(CurrentlyInteracting);
                 }
             }
             else if (CurrentInteractionStyle == InterationStyle.Toggle)
