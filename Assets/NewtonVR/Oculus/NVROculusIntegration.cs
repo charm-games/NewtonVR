@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.VR;
 
 #if NVR_Oculus
@@ -51,6 +52,11 @@ namespace NewtonVR
             }
         }
 
+        /**
+         * A list of all external callbacks that should be fired on receiving
+         * the new poses event from the hmd
+         */
+        private List<UnityAction> newPosesCallbacks = null;
 
         public override void Initialize(NVRPlayer player)
         {
@@ -68,6 +74,11 @@ namespace NewtonVR
             NVRHelpers.SetProperty(rig, "centerEyeAnchor", Player.Head.transform, true);
 
             Player.gameObject.SetActive(true);
+
+            // Register our internal callback to listen for updated poses
+            Action<OVRCameraRig> internalCallback = NewPoseCallbackInternal;
+
+            rig.UpdatedAnchors += internalCallback;
         }
 
         private Vector3 PlayspaceBounds = Vector3.zero;
@@ -104,7 +115,33 @@ namespace NewtonVR
 
             return OVRPlugin.hmdPresent;
         }
+
+        
+        public override void RegisterNewPoseCallback(UnityAction callback)
+        {
+            if (newPosesCallbacks == null) {
+                newPosesCallbacks = new List<UnityAction>();
+            }
+
+            // Store the external callback to be called from the internal
+            // callback. This is because we want the external callback to always
+            // be of type UnityAction.
+            newPosesCallbacks.Add(callback);
+        }
+
+        private void NewPoseCallbackInternal(OVRCameraRig rig)
+        {
+            foreach (UnityAction callback in newPosesCallbacks) {
+                callback();
+            }
+        }
+
+        public override void DeregisterNewPoseCallback(UnityAction callback)
+        {
+            newPosesCallbacks.Remove(callback);
+        }
     }
+
 }
 #else
 namespace NewtonVR
@@ -123,6 +160,14 @@ namespace NewtonVR
         public override bool IsHmdPresent()
         {
             return false;
+        }
+
+        public override void RegisterNewPoseCallback(UnityAction callback)
+        {
+        }
+
+        public override void DeregisterNewPoseCallback(UnityAction callback)
+        {
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Events;
 
 #if NVR_SteamVR
 using Valve.VR;
@@ -85,6 +86,16 @@ namespace NewtonVR
 
             return OpenVR.IsHmdPresent();
         }
+
+        public override void RegisterNewPoseCallback(UnityAction callback)
+        {
+            SteamVR_Events.NewPosesApplied.Listen(callback);
+        }
+
+        public override void DeregisterNewPoseCallback(UnityAction callback)
+        {
+            SteamVR_Events.NewPosesApplied.Remove(callback);
+        }
     }
 }
 #else
@@ -104,6 +115,14 @@ namespace NewtonVR
         public override bool IsHmdPresent()
         {
             return false;
+        }
+
+        public override void RegisterNewPoseCallback(UnityAction callback)
+        {
+        }
+
+        public override void DeregisterNewPoseCallback(UnityAction callback)
+        {
         }
     }
 }

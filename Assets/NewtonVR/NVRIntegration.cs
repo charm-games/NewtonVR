@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 namespace NewtonVR
 {
@@ -13,5 +14,9 @@ namespace NewtonVR
         public abstract Vector3 GetPlayspaceBounds();
 
         public abstract bool IsHmdPresent();
+
+        public abstract void RegisterNewPoseCallback(UnityAction callback);
+
+        public abstract void DeregisterNewPoseCallback(UnityAction callback);
     }
 }
