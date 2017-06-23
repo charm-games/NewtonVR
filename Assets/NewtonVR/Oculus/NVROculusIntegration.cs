@@ -57,6 +57,17 @@ namespace NewtonVR
          * the new poses event from the hmd
          */
         private List<UnityAction> newPosesCallbacks = null;
+        private List<UnityAction> NewPosesCallbacks
+        {
+            get
+            {
+                if (newPosesCallbacks == null) 
+                {
+                    newPosesCallbacks = new List<UnityAction>();
+                }
+                return newPosesCallbacks;
+            }
+        }
 
         public override void Initialize(NVRPlayer player)
         {
@@ -119,26 +130,22 @@ namespace NewtonVR
         
         public override void RegisterNewPoseCallback(UnityAction callback)
         {
-            if (newPosesCallbacks == null) {
-                newPosesCallbacks = new List<UnityAction>();
-            }
-
             // Store the external callback to be called from the internal
             // callback. This is because we want the external callback to always
             // be of type UnityAction.
-            newPosesCallbacks.Add(callback);
+            NewPosesCallbacks.Add(callback);
         }
 
         private void NewPoseCallbackInternal(OVRCameraRig rig)
         {
-            foreach (UnityAction callback in newPosesCallbacks) {
+            foreach (UnityAction callback in NewPosesCallbacks) {
                 callback();
             }
         }
 
         public override void DeregisterNewPoseCallback(UnityAction callback)
         {
-            newPosesCallbacks.Remove(callback);
+            NewPosesCallbacks.Remove(callback);
         }
     }
 
