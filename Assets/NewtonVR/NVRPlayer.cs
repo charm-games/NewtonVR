@@ -198,7 +198,7 @@ namespace NewtonVR
             }
         }
 
-        protected void SetupIntegration(bool logOutput = true)
+        protected virtual void SetupIntegration(bool logOutput = true)
         {
             CurrentIntegrationType = DetermineCurrentIntegration(logOutput);
 
