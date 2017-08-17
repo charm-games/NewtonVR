@@ -36,8 +36,11 @@ namespace NewtonVR
 
         private static bool hasOculusSDK = false;
         private static bool hasSteamVR = false;
+        private static bool hasWindowsMR = false;
+
         private static bool hasOculusSDKDefine = false;
         private static bool hasSteamVRDefine = false;
+        private static bool hasWindowsMRDefine = false;
 
         private static string progressBarMessage = null;
 
@@ -52,10 +55,13 @@ namespace NewtonVR
 
             hasSteamVR = DoesTypeExist("SteamVR");
 
+            hasWindowsMR = true;
+
             string scriptingDefine = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone);
             string[] scriptingDefines = scriptingDefine.Split(';');
             hasOculusSDKDefine = scriptingDefines.Contains(OculusDefine);
             hasSteamVRDefine = scriptingDefines.Contains(SteamVRDefine);
+            hasWindowsMRDefine = true;
 
             waitingForReload = false;
             ClearProgressBar();
@@ -181,6 +187,7 @@ namespace NewtonVR
 
             player.OculusSDKEnabled = hasOculusSDKDefine;
             player.SteamVREnabled = hasSteamVRDefine;
+            player.WindowsMREnabled = hasWindowsMRDefine;
 
             bool installSteamVR = false;
             bool installOculusSDK = false;
@@ -217,6 +224,15 @@ namespace NewtonVR
             }
             EditorGUILayout.EndHorizontal();
 
+            EditorGUILayout.BeginHorizontal();
+            if (hasWindowsMR == false)
+            {
+                using (new EditorGUI.DisabledScope(hasWindowsMR == false))
+                {
+                    EditorGUILayout.Toggle("Enable Windows MR", player.WindowsMREnabled);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
 
             GUILayout.Space(10);
 
@@ -241,6 +257,7 @@ namespace NewtonVR
             {
                 player.OverrideOculus = false;
                 player.OverrideSteamVR = false;
+                player.OverrideWindowsMR = false;
             }
             if (player.OverrideAll != modelOverrideAll)
             {
@@ -320,6 +337,41 @@ namespace NewtonVR
                 GUILayout.Space(10);
             }
 
+            if (player.WindowsMREnabled == true)
+            {
+                GUILayout.Label("Model override for WindowsMR");
+                using (new EditorGUI.DisabledScope(hasWindowsMR == false))
+                {
+                    bool modelOverrideWindowsMR = EditorGUILayout.Toggle("Override hand models for WindowsMR", player.OverrideWindowsMR);
+                    EditorGUILayout.BeginFadeGroup(Convert.ToSingle(modelOverrideWindowsMR));
+                    using (new EditorGUI.DisabledScope(modelOverrideWindowsMR == false))
+                    {
+                        player.OverrideWindowsMRLeftHand = (GameObject)EditorGUILayout.ObjectField("Left Hand", player.OverrideWindowsMRLeftHand, typeof(GameObject), false);
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Space(20);
+                        player.OverrideWindowsMRLeftHandPhysicalColliders = (GameObject)EditorGUILayout.ObjectField("Left Hand Physical Colliders", player.OverrideWindowsMRLeftHandPhysicalColliders, typeof(GameObject), false);
+                        GUILayout.EndHorizontal();
+                        player.OverrideWindowsMRRightHand = (GameObject)EditorGUILayout.ObjectField("Right Hand", player.OverrideWindowsMRRightHand, typeof(GameObject), false);
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Space(20);
+                        player.OverrideWindowsMRRightHandPhysicalColliders = (GameObject)EditorGUILayout.ObjectField("Right Hand Physical Colliders", player.OverrideWindowsMRRightHandPhysicalColliders, typeof(GameObject), false);
+                        GUILayout.EndHorizontal();
+                    }
+                    EditorGUILayout.EndFadeGroup();
+
+                    if (modelOverrideWindowsMR == true)
+                    {
+                        player.OverrideAll = false;
+                    }
+                    if (player.OverrideWindowsMR != modelOverrideWindowsMR)
+                    {
+                        EditorUtility.SetDirty(target);
+                        player.OverrideWindowsMR = modelOverrideWindowsMR;
+                    }
+                }
+
+                GUILayout.Space(10);
+            }
 
 
             GUILayout.Space(10);
