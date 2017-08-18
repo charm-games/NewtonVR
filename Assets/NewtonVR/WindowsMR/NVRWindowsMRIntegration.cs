@@ -40,6 +40,12 @@ public class NVRWindowsMRIntegration : NVRIntegration
         }
     }
 
+    /**
+     * The world space y that the rig starts the scene at. Used to reanchor the
+     * rig everytime a new floor is set by the tracking.
+     */
+    private float initialRigHeight = 0f;
+
     //--------------------------------------------------------------------------
     // Public member variables
     //--------------------------------------------------------------------------
@@ -95,6 +101,9 @@ public class NVRWindowsMRIntegration : NVRIntegration
 
     private void InitFloor()
     {
+        // Get the initial rig height before we move the rig
+        initialRigHeight = rigObj.transform.position.y;
+
         GameObject stageRootObject = new GameObject("StageRoot");
 
         // Add a stage root to set the floor position on the rig object.
@@ -120,12 +129,17 @@ public class NVRWindowsMRIntegration : NVRIntegration
         // Wr figure out the offset of our player rig from the floor and apply
         // that to the rig so that it is added to the head and hand transforms.
 
+        // Figure out how far from the floor the rig should be
         float floorToRigVerticalOffset = 
-            rigObj.transform.position.y - stageRoot.transform.position.y;
+            initialRigHeight - stageRoot.transform.position.y;
 
+        // Now we move the rig up by that distance which is why we add twice the
+        // rig offset to the floor, once to get back to original height, and
+        // once more to offset the deficit built into the hands and head
+        // positions coming from the hmd.
         rigObj.transform.position = 
             new Vector3(rigObj.transform.position.x,
-                        rigObj.transform.position.y + floorToRigVerticalOffset,
+                        stageRoot.transform.position.y + 2 * floorToRigVerticalOffset,
                         rigObj.transform.position.z);
     }
 
