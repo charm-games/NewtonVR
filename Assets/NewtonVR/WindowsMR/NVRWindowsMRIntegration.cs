@@ -46,6 +46,8 @@ public class NVRWindowsMRIntegration : NVRIntegration
      */
     private float initialRigHeight = 0f;
 
+    private float floorToRigVerticalOffset = 0f;
+
     //--------------------------------------------------------------------------
     // Public member variables
     //--------------------------------------------------------------------------
@@ -96,6 +98,18 @@ public class NVRWindowsMRIntegration : NVRIntegration
     }
 
     //--------------------------------------------------------------------------
+
+    public override void MoveRig(Transform transform)
+    {
+        rigObj.transform.position   = transform.position;
+        rigObj.transform.rotation   = transform.rotation;
+        rigObj.transform.localScale = transform.localScale;
+
+        Vector3 heightOffset = new Vector3(0f, floorToRigVerticalOffset, 0f);
+        rigObj.transform.position += heightOffset;
+    }
+
+    //--------------------------------------------------------------------------
     // Private methods 
     //--------------------------------------------------------------------------
 
@@ -130,7 +144,7 @@ public class NVRWindowsMRIntegration : NVRIntegration
         // that to the rig so that it is added to the head and hand transforms.
 
         // Figure out how far from the floor the rig should be
-        float floorToRigVerticalOffset = 
+        floorToRigVerticalOffset = 
             initialRigHeight - stageRoot.transform.position.y;
 
         // Now we move the rig up by that distance which is why we add twice the

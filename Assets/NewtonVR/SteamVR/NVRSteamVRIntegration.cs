@@ -96,6 +96,13 @@ namespace NewtonVR
         {
             SteamVR_Events.NewPosesApplied.Remove(callback);
         }
+
+        public override void MoveRig(Transform transform)
+        {
+            Player.transform.position   = transform.position;
+            Player.transform.rotation   = transform.rotation;
+            Player.transform.localScale = transform.localScale;
+        }
     }
 }
 #else
@@ -122,6 +129,10 @@ namespace NewtonVR
         }
 
         public override void DeregisterNewPoseCallback(UnityAction callback)
+        {
+        }
+
+        public override void MoveRig(Transform transform)
         {
         }
     }
