@@ -51,9 +51,11 @@ namespace NewtonVR
         {
             hasReloaded = true;
 
-            hasOculusSDK = DoesTypeExist("OVRInput");
+            //hasOculusSDK = DoesTypeExist("OVRInput");
+            hasOculusSDK = true;
 
-            hasSteamVR = DoesTypeExist("SteamVR");
+            //hasSteamVR = DoesTypeExist("SteamVR");
+            hasSteamVR = true;
 
             hasWindowsMR = true;
 

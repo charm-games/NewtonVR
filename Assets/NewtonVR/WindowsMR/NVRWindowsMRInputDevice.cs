@@ -6,11 +6,12 @@
 // Using directives 
 //------------------------------------------------------------------------------
 
+//using HoloToolkit.Unity;
 using NewtonVR;
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.VR.WSA.Input;
+using UnityEngine.XR.WSA.Input;
 
 namespace NewtonVR {
 
@@ -49,7 +50,7 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
     private float kHapticIntensity = 0.1f;
 
     private InteractionSourceHandedness handedness = 
-                                        InteractionSourceHandedness.Unspecified;
+                                        InteractionSourceHandedness.Unknown;
 
     /**
      * Cached states for capturing the controller input events so they can be
@@ -57,11 +58,6 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
      */
     private ControllerState controllerState;
     private ControllerState prevControllerState;
-
-    /**
-     * Represents the hand controller
-     */
-    private InteractionController controller;
 
     private bool isTracking = false;
 
@@ -173,20 +169,8 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
     public override void TriggerHapticPulse(ushort durationMicroSec = 500, 
                                             NVRButtons button = NVRButtons.Touchpad)
     {
-        // If we haven't received a controller detected notification yet then
-        // don't do anything
-        if (isTracking) {
-            Debug.LogError("Tried to trigger haptic pulse but no " + 
-                           "interaction controller is present");
-            return;
-        }
-
-        // The controller may not support haptics so check for that
-        if (!controller.supportsHapticBuzz) {
-            return;
-        }
-
-        controller.StartHapticBuzz(kHapticIntensity, durationMicroSec);
+        float durationSeconds = ((float)durationMicroSec) / 10e6f;
+        //source.StartHaptics(kHapticIntensity, durationSeconds);
     }
 
     //--------------------------------------------------------------------------
@@ -356,55 +340,78 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
      */
     private void SetupInputCallbacks()
     {
-        InteractionManager.SourcePressed  += UpdateButtonPressed; 
-        InteractionManager.SourceReleased += UpdateButtonPressed;
-        InteractionManager.SourceUpdated  += UpdateControllerState;
-        InteractionManager.SourceDetected += ControllerDetected;
-        InteractionManager.SourceLost     += ControllerLost;
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourcePressed  += UpdateButtonPressed; 
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceReleased += UpdateButtonReleased;
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceUpdated  += UpdateControllerState;
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceDetected += ControllerDetected;
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceLost     += ControllerLost;
     }
 
     //--------------------------------------------------------------------------
 
     private void TeardownInputCallbacks()
     {
-        InteractionManager.SourcePressed  -= UpdateButtonPressed; 
-        InteractionManager.SourceReleased -= UpdateButtonPressed;
-        InteractionManager.SourceUpdated  -= UpdateControllerState;
-        InteractionManager.SourceDetected -= ControllerDetected;
-        InteractionManager.SourceLost     -= ControllerLost;
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourcePressed  -= UpdateButtonPressed; 
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceReleased -= UpdateButtonReleased;
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceUpdated  -= UpdateControllerState;
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceDetected -= ControllerDetected;
+        UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceLost     -= ControllerLost;
     }
 
     //--------------------------------------------------------------------------
 
     /**
-     * Handles press and release events on buttons
+     * Handles press events on buttons
      */
-    private void UpdateButtonPressed(InteractionManager.SourceEventArgs eventArgs)
+    private void UpdateButtonPressed(UnityEngine.XR.WSA.Input.InteractionSourcePressedEventArgs eventArgs)
+    {
+        HandleButtonPressAndRelease(eventArgs.state.source.handedness, 
+                                    eventArgs.pressType,
+                                    eventArgs.state);
+    }
+
+    //--------------------------------------------------------------------------
+
+    /**
+     * Handles release events on buttons
+     */
+    private void UpdateButtonReleased(UnityEngine.XR.WSA.Input.InteractionSourceReleasedEventArgs eventArgs)
+    {
+        HandleButtonPressAndRelease(eventArgs.state.source.handedness, 
+                                    eventArgs.pressType,
+                                    eventArgs.state);
+    }
+
+    //--------------------------------------------------------------------------
+
+    private void HandleButtonPressAndRelease(InteractionSourceHandedness eventSourceHand, 
+                                             InteractionSourcePressType  pressType, 
+                                             InteractionSourceState      sourceState)
     {
         // Check that this is the matching hand
-        if (eventArgs.state.source.handedness != handedness) {
+        if (eventSourceHand != handedness) {
             // Don't care about other hands
             return;
         }
 
         // Update the internal state we are tracking
-        switch (eventArgs.pressKind) {
-            case InteractionPressKind.Select:
-                controllerState.triggerPressed = eventArgs.state.pressed;
+        switch (pressType) {
+            case InteractionSourcePressType.Select:
+                controllerState.triggerPressed = sourceState.selectPressed;
                 break;
-            case InteractionPressKind.Menu:
-                controllerState.menuPressed = eventArgs.state.pressed;
+            case InteractionSourcePressType.Menu:
+                controllerState.menuPressed = sourceState.selectPressed;
                 break;
-            case InteractionPressKind.Grasp:
-                controllerState.gripPressed = eventArgs.state.pressed;
+            case InteractionSourcePressType.Grasp:
+                controllerState.gripPressed = sourceState.selectPressed;
                 break;
-            case InteractionPressKind.Touchpad:
-                controllerState.touchpadPressed = eventArgs.state.pressed;
+            case InteractionSourcePressType.Touchpad:
+                controllerState.touchpadPressed = sourceState.selectPressed;
                 break;
-            case InteractionPressKind.Thumbstick:
-                controllerState.thumbstickPressed = eventArgs.state.pressed;
+            case InteractionSourcePressType.Thumbstick:
+                controllerState.thumbstickPressed = sourceState.selectPressed;
                 break;
-            case InteractionPressKind.None:
+            case InteractionSourcePressType.None:
                 break;
         }
     }
@@ -414,7 +421,7 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
     /**
      * Handles movement, touch and axis changes on controller inputs
      */
-    private void UpdateControllerState(InteractionManager.SourceEventArgs eventArgs)
+    private void UpdateControllerState(UnityEngine.XR.WSA.Input.InteractionSourceUpdatedEventArgs eventArgs)
     {
         // Check that this is the matching hand
         if (eventArgs.state.source.handedness != handedness) {
@@ -425,20 +432,16 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
         // Update the internal touch and axis state we are tracking
         
         // Trigger axis
-        controllerState.triggerValue = eventArgs.state.selectPressedValue;
+        controllerState.triggerValue = eventArgs.state.selectPressedAmount;
 
         // Touchpad 2d axis
-        InteractionControllerProperties props = 
-                                    eventArgs.state.controllerProperties;
-        controllerState.touchpadValue = new Vector2((float) props.touchpadX,
-                                                    (float) props.touchpadY);
+        controllerState.touchpadValue = eventArgs.state.touchpadPosition;
 
         // Touchpad touched value
-        controllerState.touchpadTouched = props.touchpadTouched;
+        controllerState.touchpadTouched = eventArgs.state.touchpadTouched;
 
         // Thumbstrick move value
-        controllerState.thumbstickValue = new Vector2((float) props.thumbstickX,
-                                                      (float) props.thumbstickY);
+        controllerState.thumbstickValue = eventArgs.state.thumbstickPosition;
 
         // Update position and rotation
         InteractionSourcePose sourcePose = eventArgs.state.sourcePose;
@@ -454,26 +457,19 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
 
     //--------------------------------------------------------------------------
 
-    private void ControllerDetected(InteractionManager.SourceEventArgs eventArgs)
+    private void ControllerDetected(UnityEngine.XR.WSA.Input.InteractionSourceDetectedEventArgs eventArgs)
     {
         if (eventArgs.state.source.handedness != handedness) {
             // Was for a different hand
             return;
         }
 
-        // Store the controller device for this hand
-        isTracking = eventArgs.state.source.TryGetController(out controller);
-
-        if (!isTracking) {
-            // Should this be an error?
-            Debug.LogWarning("Couldn't get interaction controller for device " + 
-                             "with id " + eventArgs.state.source.id.ToString());
-        }
+        isTracking = true;
     }
 
     //--------------------------------------------------------------------------
 
-    private void ControllerLost(InteractionManager.SourceEventArgs eventArgs)
+    private void ControllerLost(UnityEngine.XR.WSA.Input.InteractionSourceLostEventArgs eventArgs)
     {
         if (eventArgs.state.source.handedness != handedness) {
             // Was for a different hand
