@@ -367,7 +367,7 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
     {
         HandleButtonPressAndRelease(eventArgs.state.source.handedness, 
                                     eventArgs.pressType,
-                                    eventArgs.state);
+                                    true);
     }
 
     //--------------------------------------------------------------------------
@@ -379,14 +379,14 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
     {
         HandleButtonPressAndRelease(eventArgs.state.source.handedness, 
                                     eventArgs.pressType,
-                                    eventArgs.state);
+                                    false);
     }
 
     //--------------------------------------------------------------------------
 
     private void HandleButtonPressAndRelease(InteractionSourceHandedness eventSourceHand, 
                                              InteractionSourcePressType  pressType, 
-                                             InteractionSourceState      sourceState)
+                                             bool                        isPressed)
     {
         // Check that this is the matching hand
         if (eventSourceHand != handedness) {
@@ -397,19 +397,19 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
         // Update the internal state we are tracking
         switch (pressType) {
             case InteractionSourcePressType.Select:
-                controllerState.triggerPressed = sourceState.selectPressed;
+                controllerState.triggerPressed = isPressed;
                 break;
             case InteractionSourcePressType.Menu:
-                controllerState.menuPressed = sourceState.selectPressed;
+                controllerState.menuPressed = isPressed;
                 break;
             case InteractionSourcePressType.Grasp:
-                controllerState.gripPressed = sourceState.selectPressed;
+                controllerState.gripPressed = isPressed;
                 break;
             case InteractionSourcePressType.Touchpad:
-                controllerState.touchpadPressed = sourceState.selectPressed;
+                controllerState.touchpadPressed = isPressed;
                 break;
             case InteractionSourcePressType.Thumbstick:
-                controllerState.thumbstickPressed = sourceState.selectPressed;
+                controllerState.thumbstickPressed = isPressed;
                 break;
             case InteractionSourcePressType.None:
                 break;
