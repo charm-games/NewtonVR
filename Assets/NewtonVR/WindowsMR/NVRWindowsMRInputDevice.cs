@@ -448,8 +448,8 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
 
         Vector3    position;
         Quaternion rotation;
-        if (sourcePose.TryGetPosition(out position, InteractionSourceNode.Pointer) && 
-            sourcePose.TryGetRotation(out rotation, InteractionSourceNode.Pointer)) {
+        if (sourcePose.TryGetPosition(out position, InteractionSourceNode.Grip) && 
+            sourcePose.TryGetRotation(out rotation, InteractionSourceNode.Grip)) {
             transform.localPosition = position;
             transform.localRotation = rotation;
         }
