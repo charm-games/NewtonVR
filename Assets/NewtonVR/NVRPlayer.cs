@@ -5,6 +5,7 @@ using UnityEngine.VR;
 using System.Linq;
 using UnityEngine.Events;
 
+
 namespace NewtonVR
 {
     public class NVRPlayer : MonoBehaviour
@@ -25,6 +26,8 @@ namespace NewtonVR
         public bool SteamVREnabled = false;
         [HideInInspector]
         public bool OculusSDKEnabled = false;
+        [HideInInspector]
+        public bool WindowsMREnabled = false;
 
         public InterationStyle InteractionStyle;
         public bool PhysicalHands = true;
@@ -125,6 +128,17 @@ namespace NewtonVR
         public GameObject OverrideOculusRightHand;
         [HideInInspector]
         public GameObject OverrideOculusRightHandPhysicalColliders;
+
+        [HideInInspector]
+        public bool OverrideWindowsMR;
+        [HideInInspector]
+        public GameObject OverrideWindowsMRLeftHand;
+        [HideInInspector]
+        public GameObject OverrideWindowsMRLeftHandPhysicalColliders;
+        [HideInInspector]
+        public GameObject OverrideWindowsMRRightHand;
+        [HideInInspector]
+        public GameObject OverrideWindowsMRRightHandPhysicalColliders;
 
         [Space]
 
@@ -239,9 +253,9 @@ namespace NewtonVR
             NVRSDKIntegrations currentIntegration = NVRSDKIntegrations.None;
             string resultLog = "[NewtonVR] Version : " + NewtonVRVersion + ". ";
 
-            if (VRDevice.isPresent == true)
+            if (UnityEngine.XR.XRDevice.isPresent == true)
             {
-                resultLog += "Found VRDevice: " + VRDevice.model + ". ";
+                resultLog += "Found VRDevice: " + UnityEngine.XR.XRDevice.model + ". ";
 
 #if !NVR_Oculus && !NVR_SteamVR
                 string warning = "Neither SteamVR or Oculus SDK is enabled in the NVRPlayer. Please check the \"Enable SteamVR\" or \"Enable Oculus SDK\" checkbox in the NVRPlayer script in the NVRPlayer GameObject.";
@@ -263,6 +277,10 @@ namespace NewtonVR
                     resultLog += "Using SteamVR SDK";
                 }
 #endif
+                // WindowsMR
+                if (UnityEngine.XR.WSA.HolographicSettings.IsDisplayOpaque) {
+                    return NVRSDKIntegrations.WindowsMR;
+                }
             }
 
             if (currentIntegration == NVRSDKIntegrations.None)

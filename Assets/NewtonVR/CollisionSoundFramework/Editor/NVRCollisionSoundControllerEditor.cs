@@ -42,7 +42,8 @@ namespace NewtonVR
         private static void DidReloadScripts()
         {
             hasReloaded = true;
-            hasFMODSDK = DoesTypeExist("FMODPlatform");
+            //hasFMODSDK = DoesTypeExist("FMODPlatform");
+            hasFMODSDK = true;
 
             //string scriptingDefine = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone);
             //string[] scriptingDefines = scriptingDefine.Split(';');
