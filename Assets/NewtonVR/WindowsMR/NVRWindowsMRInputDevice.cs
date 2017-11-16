@@ -11,7 +11,9 @@ using NewtonVR;
 using System;
 using System.Collections;
 using UnityEngine;
+#if UNITY_WSA
 using UnityEngine.XR.WSA.Input;
+#endif // UNITY_WSA
 
 namespace NewtonVR {
 
@@ -49,8 +51,10 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
 
     private float kHapticIntensity = 0.1f;
 
+#if UNITY_WSA
     private InteractionSourceHandedness handedness = 
                                         InteractionSourceHandedness.Unknown;
+#endif // UNITY_WSA
 
     /**
      * Cached states for capturing the controller input events so they can be
@@ -73,6 +77,7 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
 
     public override void Initialize(NVRHand hand)
     {
+#if UNITY_WSA
         base.Initialize(hand);
 
         if (hand == Hand.Player.LeftHand) {
@@ -94,6 +99,7 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
         prevControllerState = controllerState;
 
         SetupInputCallbacks();
+#endif // UNITY_WSA
     }
 
     //--------------------------------------------------------------------------
@@ -335,6 +341,7 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
     // Private methods 
     //--------------------------------------------------------------------------
 
+#if UNITY_WSA
     /**
      * Setup callbacks to update the internal input state
      */
@@ -479,6 +486,8 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
         isTracking = false;
     }
 
+#endif // UNITY_WSA
+
     //--------------------------------------------------------------------------
     // Messages
     //--------------------------------------------------------------------------
@@ -525,7 +534,9 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
 
     void OnDestroy()
     {
+#if UNITY_WSA
         TeardownInputCallbacks();
+#endif // UNITY_WSA
     }
 
     //--------------------------------------------------------------------------

@@ -11,8 +11,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-
-
 namespace NewtonVR {
 
 //------------------------------------------------------------------------------
@@ -58,9 +56,11 @@ public class NVRWindowsMRIntegration : NVRIntegration
 
     public override void Initialize(NVRPlayer player)
     {
+#if UNITY_WSA
         rigObj = player.gameObject;
 
         InitPoseCallback();
+#endif // UNITY_WSA
     }
 
     //--------------------------------------------------------------------------
@@ -74,7 +74,11 @@ public class NVRWindowsMRIntegration : NVRIntegration
 
     public override bool IsHmdPresent()
     {
+#if UNITY_WSA
         return UnityEngine.XR.WSA.HolographicSettings.IsDisplayOpaque;
+#else 
+        return false;
+#endif // UNITY_WSA
     }
 
     //--------------------------------------------------------------------------
@@ -101,14 +105,13 @@ public class NVRWindowsMRIntegration : NVRIntegration
         rigObj.transform.position   = transform.position;
         rigObj.transform.rotation   = transform.rotation;
         rigObj.transform.localScale = transform.localScale;
-
-
     }
 
     //--------------------------------------------------------------------------
     // Private methods 
     //--------------------------------------------------------------------------
 
+#if UNITY_WSA
     private void NewPoseCallbackInternal(UnityEngine.XR.WSA.Input.InteractionSourceUpdatedEventArgs eventArgs)
     {
         foreach (UnityAction callback in NewPosesCallbacks) {
@@ -124,9 +127,9 @@ public class NVRWindowsMRIntegration : NVRIntegration
         // callback
         UnityEngine.XR.WSA.Input.InteractionManager.InteractionSourceUpdated += NewPoseCallbackInternal;
     }
+#endif // UNITY_WSA
 
     //--------------------------------------------------------------------------
-    
 }
 
 }

@@ -263,7 +263,7 @@ namespace NewtonVR
 #endif
 
 #if NVR_Oculus
-                if (VRSettings.loadedDeviceName.IndexOf("oculus", System.StringComparison.CurrentCultureIgnoreCase) != -1)
+                if (UnityEngine.XR.XRSettings.loadedDeviceName.IndexOf("oculus", System.StringComparison.CurrentCultureIgnoreCase) != -1)
                 {
                     currentIntegration = NVRSDKIntegrations.Oculus;
                     resultLog += "Using Oculus SDK";
@@ -277,10 +277,14 @@ namespace NewtonVR
                     resultLog += "Using SteamVR SDK";
                 }
 #endif
+
+#if UNITY_WSA
                 // WindowsMR
                 if (UnityEngine.XR.WSA.HolographicSettings.IsDisplayOpaque) {
                     return NVRSDKIntegrations.WindowsMR;
                 }
+#endif // UNITY_WSA
+
             }
 
             if (currentIntegration == NVRSDKIntegrations.None)
