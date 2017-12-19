@@ -249,7 +249,7 @@ namespace NewtonVR
 #endif
 
 #if NVR_Oculus
-                if (UnityEngine.XR.XRDevice.model.IndexOf("oculus", System.StringComparison.CurrentCultureIgnoreCase) != -1)
+                if (UnityEngine.XR.XRSettings.loadedDeviceName.IndexOf("oculus", System.StringComparison.CurrentCultureIgnoreCase) != -1)
                 {
                     currentIntegration = NVRSDKIntegrations.Oculus;
                     resultLog += "Using Oculus SDK";
