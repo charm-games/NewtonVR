@@ -668,7 +668,7 @@ namespace NewtonVR
         protected virtual void OnTriggerEnter(Collider collider)
         {
             NVRInteractable interactable = NVRInteractables.GetInteractable(collider);
-            if (interactable == null || interactable.enabled == false)
+            if (interactable == null || interactable.isActiveAndEnabled == false)
                 return;
 
             if (CurrentlyHoveringOver.ContainsKey(interactable) == false)
@@ -681,7 +681,7 @@ namespace NewtonVR
         protected virtual void OnTriggerStay(Collider collider)
         {
             NVRInteractable interactable = NVRInteractables.GetInteractable(collider);
-            if (interactable == null || interactable.enabled == false)
+            if (interactable == null || interactable.isActiveAndEnabled == false)
                 return;
 
             if (CurrentlyHoveringOver.ContainsKey(interactable) == false)
