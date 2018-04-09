@@ -18,5 +18,7 @@ namespace NewtonVR
         public abstract void RegisterNewPoseCallback(UnityAction callback);
 
         public abstract void DeregisterNewPoseCallback(UnityAction callback);
+
+        public abstract void MoveRig(Transform transform);
     }
 }

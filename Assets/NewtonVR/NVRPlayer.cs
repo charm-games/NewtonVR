@@ -5,6 +5,7 @@ using UnityEngine.VR;
 using System.Linq;
 using UnityEngine.Events;
 
+
 namespace NewtonVR
 {
     public class NVRPlayer : MonoBehaviour
@@ -25,6 +26,8 @@ namespace NewtonVR
         public bool SteamVREnabled = false;
         [HideInInspector]
         public bool OculusSDKEnabled = false;
+        [HideInInspector]
+        public bool WindowsMREnabled = false;
 
         public InterationStyle InteractionStyle;
         public bool PhysicalHands = true;
@@ -125,6 +128,17 @@ namespace NewtonVR
         public GameObject OverrideOculusRightHand;
         [HideInInspector]
         public GameObject OverrideOculusRightHandPhysicalColliders;
+
+        [HideInInspector]
+        public bool OverrideWindowsMR;
+        [HideInInspector]
+        public GameObject OverrideWindowsMRLeftHand;
+        [HideInInspector]
+        public GameObject OverrideWindowsMRLeftHandPhysicalColliders;
+        [HideInInspector]
+        public GameObject OverrideWindowsMRRightHand;
+        [HideInInspector]
+        public GameObject OverrideWindowsMRRightHandPhysicalColliders;
 
         [Space]
 
@@ -263,6 +277,14 @@ namespace NewtonVR
                     resultLog += "Using SteamVR SDK";
                 }
 #endif
+
+#if UNITY_WSA
+                // WindowsMR
+                if (UnityEngine.XR.WSA.HolographicSettings.IsDisplayOpaque) {
+                    return NVRSDKIntegrations.WindowsMR;
+                }
+#endif // UNITY_WSA
+
             }
 
             if (currentIntegration == NVRSDKIntegrations.None)

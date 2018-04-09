@@ -209,6 +209,28 @@ namespace NewtonVR
                     }
                 }
             }
+            else if (Player.CurrentIntegrationType == NVRSDKIntegrations.WindowsMR)
+            {
+                InputDevice = this.gameObject.AddComponent<NVRWindowsMRInputDevice>();
+
+                if (Player.OverrideWindowsMR == true)
+                {
+                    if (IsLeft)
+                    {
+                        CustomModel = Player.OverrideWindowsMRLeftHand;
+                        CustomPhysicalColliders = Player.OverrideWindowsMRLeftHandPhysicalColliders;
+                    }
+                    else if (IsRight)
+                    {
+                        CustomModel = Player.OverrideWindowsMRRightHand;
+                        CustomPhysicalColliders = Player.OverrideWindowsMRRightHandPhysicalColliders;
+                    }
+                    else
+                    {
+                        Debug.LogError("[NewtonVR] Error: Unknown hand for WindowsMR model override.");
+                    }
+                }
+            }
             else
             {
                 //Debug.LogError("[NewtonVR] Critical Error: NVRPlayer.CurrentIntegration not setup.");
