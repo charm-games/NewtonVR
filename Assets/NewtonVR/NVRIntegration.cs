@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using UnityEngine.XR;
 
 namespace NewtonVR
 {
@@ -20,5 +21,13 @@ namespace NewtonVR
         public abstract void DeregisterNewPoseCallback(UnityAction callback);
 
         public abstract void MoveRig(Transform transform);
+    
+        public abstract Transform GetOrigin();
+
+        public abstract Vector3 GetEyeOffset(XRNode eye);
+
+        public abstract Matrix4x4 GetEyeProjectionMatrix(XRNode eye,
+                                                         float  nearZ,
+                                                         float  farZ);
     }
 }

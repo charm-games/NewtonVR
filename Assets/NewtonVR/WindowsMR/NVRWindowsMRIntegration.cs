@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.XR;
 
 namespace NewtonVR {
 
@@ -105,6 +106,32 @@ public class NVRWindowsMRIntegration : NVRIntegration
         rigObj.transform.position   = transform.position;
         rigObj.transform.rotation   = transform.rotation;
         rigObj.transform.localScale = transform.localScale;
+    }
+
+    //--------------------------------------------------------------------------
+
+    public override Transform GetOrigin()
+    {
+        return Player.transform;
+    }
+
+    //--------------------------------------------------------------------------
+
+    public override Vector3 GetEyeOffset(XRNode eye)
+    {
+        return Vector3.zero;
+    }
+
+    //--------------------------------------------------------------------------
+
+    /**
+     * Returns the projection matrix for the given eye
+     */
+    public override Matrix4x4 GetEyeProjectionMatrix(XRNode eye,
+                                                     float  nearZ,
+                                                     float  farZ)
+    {
+        return Matrix4x4.identity;
     }
 
     //--------------------------------------------------------------------------

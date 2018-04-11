@@ -6,7 +6,7 @@ using System.Text;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.VR;
+using UnityEngine.XR;
 
 #if NVR_Oculus
 namespace NewtonVR
@@ -154,6 +154,34 @@ namespace NewtonVR
             Player.transform.rotation   = transform.rotation;
             Player.transform.localScale = transform.localScale;
         }
+
+        //--------------------------------------------------------------------------
+
+        public override Transform GetOrigin()
+        {
+            return Player.transform;
+        }
+
+        //--------------------------------------------------------------------------
+
+        public override Vector3 GetEyeOffset(XRNode eye)
+        {
+            return Vector3.zero;
+        }
+
+        //--------------------------------------------------------------------------
+
+        /**
+         * Returns the projection matrix for the given eye
+         */
+        public override Matrix4x4 GetEyeProjectionMatrix(XRNode eye,
+                                                         float  nearZ,
+                                                         float  farZ)
+        {
+            return Matrix4x4.identity;
+        }
+
+        //--------------------------------------------------------------------------
     }
 
 }
@@ -187,6 +215,34 @@ namespace NewtonVR
         public override void MoveRig(Transform transform)
         {
         }
+
+        //--------------------------------------------------------------------------
+
+        public override Transform GetOrigin()
+        {
+            return Player.transform;
+        }
+
+        //--------------------------------------------------------------------------
+
+        public override Vector3 GetEyeOffset(XRNode eye)
+        {
+            return Vector3.zero;
+        }
+
+        //--------------------------------------------------------------------------
+
+        /**
+         * Returns the projection matrix for the given eye
+         */
+        public override Matrix4x4 GetEyeProjectionMatrix(XRNode eye,
+                                                         float  nearZ,
+                                                         float  farZ)
+        {
+            return Matrix4x4.identity;
+        }
+
+        //--------------------------------------------------------------------------
     }
 }
 #endif
