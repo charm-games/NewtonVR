@@ -57,7 +57,9 @@ namespace NewtonVR
         public NVRInteractableEvent OnBeginInteraction = new NVRInteractableEvent();
         public NVRInteractableEvent OnEndInteraction = new NVRInteractableEvent();
 
-        private NVRInteractable ClosestGraspable;
+        // CHARM-GAMES @ TDM: Changed to allow access to closest graspable
+        // from HoverTargetInteractionMode.
+        protected NVRInteractable ClosestGraspable;
 
         private int EstimationSampleIndex;
         private Vector3[] LastPositions;
