@@ -10,6 +10,8 @@ namespace NewtonVR
     {
         protected NVRPlayer Player;
 
+        public abstract void DontDestroyRenderer();
+
         public abstract void Initialize(NVRPlayer player);
 
         public abstract Vector3 GetPlayspaceBounds();
