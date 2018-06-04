@@ -68,6 +68,10 @@ namespace NewtonVR
                 return newPosesCallbacks;
             }
         }
+        
+        public override void DontDestroyRenderer()
+        {
+        }
 
         public override void Initialize(NVRPlayer player)
         {
