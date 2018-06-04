@@ -54,6 +54,13 @@ public class NVRWindowsMRIntegration : NVRIntegration
     //--------------------------------------------------------------------------
     // Public methods 
     //--------------------------------------------------------------------------
+     
+    public override void DontDestroyRenderer()
+    {
+        GameObject.DontDestroyOnLoad(SteamVR_Render.instance.gameObject);
+    }
+    
+    //--------------------------------------------------------------------------
 
     public override void Initialize(NVRPlayer player)
     {
