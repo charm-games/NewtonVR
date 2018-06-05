@@ -15,7 +15,7 @@ namespace NewtonVR
 {
     public class NVRSteamVRIntegration : NVRIntegration
     {
-        public override void DontDestroyRenderer()
+        public override void DontDestroyOnLoad()
         {
             GameObject.DontDestroyOnLoad(SteamVR_Render.instance.gameObject);
         }
