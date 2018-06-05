@@ -69,7 +69,7 @@ namespace NewtonVR
             }
         }
         
-        public override void DontDestroyRenderer()
+        public override void DontDestroyOnLoad()
         {
         }
 

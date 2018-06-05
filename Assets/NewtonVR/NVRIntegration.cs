@@ -10,7 +10,7 @@ namespace NewtonVR
     {
         protected NVRPlayer Player;
 
-        public abstract void DontDestroyRenderer();
+        public abstract void DontDestroyOnLoad();
 
         public abstract void Initialize(NVRPlayer player);
 
