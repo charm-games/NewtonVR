@@ -117,6 +117,14 @@ public class NVRWindowsMRIntegration : NVRIntegration
 
     //--------------------------------------------------------------------------
 
+    public override void MoveRig(Vector3 position, Quaternion orientation)
+    {
+        rigObj.transform.position = position;
+        rigObj.transform.rotation = orientation;
+    }
+
+    //--------------------------------------------------------------------------
+
     public override Transform GetOrigin()
     {
         return Player.transform;

@@ -23,6 +23,8 @@ namespace NewtonVR
         public abstract void DeregisterNewPoseCallback(UnityAction callback);
 
         public abstract void MoveRig(Transform transform);
+
+        public abstract void MoveRig(Vector3 position, Quaternion orientation);
     
         public abstract Transform GetOrigin();
 

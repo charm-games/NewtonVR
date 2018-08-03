@@ -161,6 +161,14 @@ namespace NewtonVR
 
         //--------------------------------------------------------------------------
 
+        public override void MoveRig(Vector3 position, Quaternion orientation)
+        {
+            Player.transform.position = position;
+            Player.transform.rotation = orientation;
+        }
+
+        //--------------------------------------------------------------------------
+
         public override Transform GetOrigin()
         {
             return Player.transform;
