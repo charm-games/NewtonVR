@@ -82,7 +82,9 @@ namespace NewtonVR
                 }
             }
 
-            if (DropDistance != -1 && AttachedHand.CurrentInteractionStyle != InterationStyle.ByScript && shortestDistance > DropDistance)
+            // TIM @ CHARM-GAMES - removed check against ByScript interaction mode              [sic]
+            // since we want this behaviour: AttachedHand.CurrentInteractionStyle != InterationStyle.ByScript 
+            if (DropDistance != -1 && shortestDistance > DropDistance)
             {
                 DroppedBecauseOfDistance();
                 return true;
