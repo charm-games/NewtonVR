@@ -654,7 +654,7 @@ namespace NewtonVR
             interactable.GraspTargetEnd(this);
         }
 
-        private NVRInteractable FindClosest()
+        protected virtual NVRInteractable FindClosest()
         {
             NVRInteractable closest = null;
             float closestDistance = float.MaxValue;
