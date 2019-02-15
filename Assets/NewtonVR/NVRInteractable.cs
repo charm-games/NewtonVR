@@ -21,6 +21,12 @@ namespace NewtonVR
         protected Collider[] Colliders;
         protected Vector3 ClosestHeldPoint;
 
+        [SerializeField,
+         Tooltip("Set to true if you have a child movable where you don't " + 
+                 "want to walk up the hierarchy and grab the top level " + 
+                 "moveable first")]
+        private bool ignoreParentInteractables = false;
+
         public virtual bool IsAttached
         {
             get
@@ -33,6 +39,14 @@ namespace NewtonVR
             get
             {
                 return (GraspTargetCount > 0);
+            }
+        }
+
+        public bool IgnoreParentInteractables
+        {
+            get
+            {
+                return ignoreParentInteractables;
             }
         }
 
