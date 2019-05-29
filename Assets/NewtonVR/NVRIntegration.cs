@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine.XR;
+using System;
 
 namespace NewtonVR
 {
@@ -10,9 +11,31 @@ namespace NewtonVR
     {
         protected NVRPlayer Player;
 
+        protected event Action OnInitialized;
+
+        public void AddOnInitializedListener(Action callback) {
+            OnInitialized += callback;
+        }
+
+        public void RemoveOnInitializedListener(Action callback) {
+            OnInitialized -= callback;
+        }
+
+        protected void InvokeOnInitializedEvent()
+        {
+            if (OnInitialized != null)
+            {
+                OnInitialized();
+            }
+        }
+
         public abstract void DontDestroyOnLoad();
 
         public abstract void Initialize(NVRPlayer player);
+
+        public abstract void DeInitialize();
+
+        public abstract bool IsInit();
 
         public abstract Vector3 GetPlayspaceBounds();
 

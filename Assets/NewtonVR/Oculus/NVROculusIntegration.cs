@@ -13,6 +13,7 @@ namespace NewtonVR
 {
     public class NVROculusIntegration : NVRIntegration
     {
+        private bool initialized = false;
         private OVRBoundary boundary;
         private OVRBoundary Boundary
         {
@@ -94,6 +95,19 @@ namespace NewtonVR
             Action<OVRCameraRig> internalCallback = NewPoseCallbackInternal;
 
             rig.UpdatedAnchors += internalCallback;
+
+            initialized = true;
+            InvokeOnInitializedEvent();
+        }
+
+        public override void DeInitialize()
+        {
+            // no-op
+        }
+
+        public override bool IsInit()
+        {
+            return initialized;
         }
 
         private Vector3 PlayspaceBounds = Vector3.zero;
@@ -118,6 +132,7 @@ namespace NewtonVR
                 }
 
                 if (Display == null)
+
                 {
                     return false;
                 }

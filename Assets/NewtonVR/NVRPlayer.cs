@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.VR;
 using System.Linq;
 using UnityEngine.Events;
-
+using System;
 
 namespace NewtonVR
 {
@@ -153,6 +153,7 @@ namespace NewtonVR
         public NVRSDKIntegrations CurrentIntegrationType = NVRSDKIntegrations.None;
 
         protected NVRIntegration Integration;
+        protected event Action onIntegrationInitialized;
 
         private Dictionary<Collider, NVRHand> ColliderToHandMapping;
 
@@ -241,6 +242,16 @@ namespace NewtonVR
                 }
                 return;
             }
+
+            Integration.AddOnInitializedListener(OnIntegrationInitialized);
+        }
+
+        protected void OnIntegrationInitialized()
+        {
+            if (onIntegrationInitialized != null)
+            {
+                onIntegrationInitialized();
+            }
         }
 
         protected virtual void SetupFallbackNonVRIntegration()
@@ -318,6 +329,19 @@ namespace NewtonVR
                     ColliderToHandMapping.Add(colliders[index], hand);
                 }
             }
+        }
+
+        public void AddOnIntegrationInitializedListener(Action callback) {
+            onIntegrationInitialized += callback;
+        }
+
+        public void RemoveOnIntegrationInitializedListener(Action callback) {
+            onIntegrationInitialized -= callback;
+        }
+
+        public bool IsIntegrationInitialized()
+        {
+            return Integration.IsInit();
         }
 
         public NVRHand GetHand(Collider collider)
