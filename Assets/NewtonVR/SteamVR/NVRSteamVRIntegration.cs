@@ -14,6 +14,8 @@ namespace NewtonVR
 {
     public class NVRSteamVRIntegration : NVRIntegration
     {
+        private bool initialized = false;
+
         public override void Initialize(NVRPlayer player)
         {
             Player = player;
@@ -45,6 +47,19 @@ namespace NewtonVR
             {
                 steamvr_objects[objectIndex].lockPhysicsUpdateRateToRenderFrequency = false; //this generally seems to break things :) Just make sure your Time -> Physics Timestep is set to 0.011
             }
+
+            initialized = true;
+            InvokeOnInitializedEvent();
+        }
+
+        public override void DeInitialize()
+        {
+            // no-op
+        }
+
+        public override bool IsInit()
+        {
+            return initialized;
         }
 
         private Vector3 PlayspaceBounds = Vector3.zero;

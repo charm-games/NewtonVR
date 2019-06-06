@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using System;
 
 namespace NewtonVR
 {
@@ -10,6 +11,10 @@ namespace NewtonVR
         protected NVRPlayer Player;
 
         public abstract void Initialize(NVRPlayer player);
+
+        public abstract void DeInitialize();
+
+        public abstract bool IsInit();
 
         public abstract Vector3 GetPlayspaceBounds();
 
