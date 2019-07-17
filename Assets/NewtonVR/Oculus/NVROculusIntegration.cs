@@ -221,6 +221,19 @@ namespace NewtonVR
         {
         }
 
+        public override void DeInitialize()
+        {
+        }
+
+        public override bool IsInit()
+        {
+            return false;
+        }
+
+        public override void DontDestroyOnLoad()
+        {
+        }
+
         public override Vector3 GetPlayspaceBounds()
         {
             return Vector3.zero;
@@ -240,6 +253,10 @@ namespace NewtonVR
         }
 
         public override void MoveRig(Transform transform)
+        {
+        }
+
+        public override void MoveRig(Vector3 position, Quaternion orientation)
         {
         }
 
