@@ -293,6 +293,26 @@ public class NVRPSVRInputDevice : NVRInputDevice
     }
 
     //--------------------------------------------------------------------------
+
+    private void UpdateTransforms()
+    {
+        Vector3 position = Vector3.zero;
+        Quaternion orientation = Quaternion.identity;
+
+        PlayStationVRResult result = 
+            Tracker.GetTrackedDevicePosition(deviceHandle, out position);
+        if (result == PlayStationVRResult.Ok) {
+            transform.localPosition = position;
+        }
+
+        result = 
+            Tracker.GetTrackedDeviceOrientation(deviceHandle, out orientation);
+        if (result == PlayStationVRResult.Ok) {
+            transform.localRotation = orientation;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // Messages
     //--------------------------------------------------------------------------
 
@@ -323,7 +343,8 @@ public class NVRPSVRInputDevice : NVRInputDevice
      */
     private void Update() 
     {
-
+        // TODO: This needs to move to a non time-dependent update method
+        UpdateTransforms(); 
     }
 
     //--------------------------------------------------------------------------
