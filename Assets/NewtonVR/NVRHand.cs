@@ -139,6 +139,18 @@ namespace NewtonVR
             }
         }
 
+        public bool IsInputDeviceInitialized
+        {
+            get
+            {
+                if (InputDevice != null) {
+                    return InputDevice.IsInitialized;
+                }
+
+                return false;
+            }
+        }
+
 
         public virtual void PreInitialize(NVRPlayer player)
         {
@@ -233,9 +245,31 @@ namespace NewtonVR
                     }
                 }
             }
+            else if (Player.CurrentIntegrationType == NVRSDKIntegrations.PSVR)
+            {
+                InputDevice = this.gameObject.AddComponent<NVRPSVRInputDevice>();
+
+                if (Player.OverridePSVR == true)
+                {
+                    if (IsLeft)
+                    {
+                        CustomModel = Player.OverridePSVRLeftHand;
+                        CustomPhysicalColliders = Player.OverridePSVRLeftHandPhysicalColliders;
+                    }
+                    else if (IsRight)
+                    {
+                        CustomModel = Player.OverridePSVRRightHand;
+                        CustomPhysicalColliders = Player.OverridePSVRRightHandPhysicalColliders;
+                    }
+                    else
+                    {
+                        Debug.LogError("[NewtonVR] Error: Unknown hand for PSVR model override.");
+                    }
+                }
+            }
             else
             {
-                //Debug.LogError("[NewtonVR] Critical Error: NVRPlayer.CurrentIntegration not setup.");
+                Debug.LogError("[NewtonVR] Critical Error in NVRHand: NVRPlayer.CurrentIntegration not setup.");
                 return;
             }
 
