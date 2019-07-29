@@ -203,6 +203,9 @@ public class NVRPSVRInputDevice : NVRInputDevice
             case NVRButtons.Grip:
                 return (!WasPressed(MoveControllerButtonMap.ButtonT) &&  
                             IsPressed(MoveControllerButtonMap.ButtonT));
+            case NVRButtons.Touchpad:
+                return (!WasPressed(MoveControllerButtonMap.ButtonTriangle) &&  
+                            IsPressed(MoveControllerButtonMap.ButtonTriangle));
             case NVRButtons.ApplicationMenu:
                 return (!WasPressed(MoveControllerButtonMap.ButtonMove) &&  
                             IsPressed(MoveControllerButtonMap.ButtonMove));
@@ -224,6 +227,9 @@ public class NVRPSVRInputDevice : NVRInputDevice
             case NVRButtons.Grip:
                 return (WasPressed(MoveControllerButtonMap.ButtonT) &&  
                             !IsPressed(MoveControllerButtonMap.ButtonT));
+            case NVRButtons.Touchpad:
+                return (WasPressed(MoveControllerButtonMap.ButtonTriangle) &&  
+                            !IsPressed(MoveControllerButtonMap.ButtonTriangle));
             case NVRButtons.ApplicationMenu:
                 return (WasPressed(MoveControllerButtonMap.ButtonMove) &&  
                             !IsPressed(MoveControllerButtonMap.ButtonMove));
@@ -243,6 +249,8 @@ public class NVRPSVRInputDevice : NVRInputDevice
                 return IsPressed(MoveControllerButtonMap.ButtonT);
             case NVRButtons.Grip:
                 return IsPressed(MoveControllerButtonMap.ButtonT);
+            case NVRButtons.Touchpad:
+                return IsPressed(MoveControllerButtonMap.ButtonTriangle);
             case NVRButtons.ApplicationMenu:
                 return IsPressed(MoveControllerButtonMap.ButtonMove);
             default:
@@ -396,6 +404,16 @@ public class NVRPSVRInputDevice : NVRInputDevice
     }
 
     //--------------------------------------------------------------------------
+
+    private void UnregisterDevice()
+    {
+        Debug.Log("NVRPSVRInputDevice.UnregisterDevice - Unregistering tracked device for hand " + 
+                  (Hand.IsLeft ? "Left" : "Right"));
+
+        Tracker.UnregisterTrackedDevice(deviceHandle);
+    }
+
+    //--------------------------------------------------------------------------
     // Messages
     //--------------------------------------------------------------------------
 
@@ -436,6 +454,20 @@ public class NVRPSVRInputDevice : NVRInputDevice
     {
         // Turn over the frame once 
         prevButtonState = buttonState;
+    }
+
+    //--------------------------------------------------------------------------
+
+    private void OnDisable()
+    {
+        UnregisterDevice();
+    }
+    
+    //--------------------------------------------------------------------------
+
+    private void OnDestroy()
+    {
+        UnregisterDevice();
     }
 
     //--------------------------------------------------------------------------
