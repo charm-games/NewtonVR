@@ -23,16 +23,37 @@ namespace NewtonVR {
 #if UNITY_PS4
 public class NVRPSVRInputDevice : NVRInputDevice 
 {
+    //--------------------------------------------------------------------------
+    // Type definitions 
+    //--------------------------------------------------------------------------
+
+    private enum MoveControllerButtonMap
+    {
+        ButtonSelect        = 1 << 0,
+        ButtonT             = 1 << 1,
+        ButtonMove          = 1 << 2,
+        ButtonStart         = 1 << 3,
+        ButtonTriangle      = 1 << 4,
+        ButtonCircle        = 1 << 5,
+        ButtonCross         = 1 << 6,
+        ButtonSquare        = 1 << 7,
+        ButtonIntercepted   = 1 << 15 
+    }
 
     //--------------------------------------------------------------------------
     // Private member variables
     //--------------------------------------------------------------------------
 
     private int deviceHandle = -1;
+    private int deviceIndex = -1;
+    private int deviceSlot = 0;
     
     private GameObject renderModel = null;
 
     private bool isInitialized = false;
+
+    private int buttonState = 0;
+    private int prevButtonState = 0;
 
 #if UNITY_PS4
         public PlayStationVRTrackingType trackingType = 
@@ -152,7 +173,14 @@ public class NVRPSVRInputDevice : NVRInputDevice
 
     public override float GetAxis1D(NVRButtons button)
     {
-        return 0;
+        const float kMaxButtonPress = 65535;
+        float buttonVal = PS4Input.MoveGetAnalogButton(deviceSlot, deviceIndex);
+        float normalizedVal = (buttonVal / kMaxButtonPress);
+
+        // This API is supposed to return button values from 0.5 to 1 so convert
+        // our normalized value to this
+        float convertedVal = (normalizedVal / 2f) + 0.5f;
+        return convertedVal;
     }
 
     //--------------------------------------------------------------------------
@@ -166,21 +194,60 @@ public class NVRPSVRInputDevice : NVRInputDevice
 
     public override bool GetPressDown(NVRButtons button)
     {
-        return false;
+        buttonState = PS4Input.MoveGetButtons(deviceSlot, deviceIndex);
+
+        switch (button) {
+            case NVRButtons.Trigger:
+                return (!WasPressed(MoveControllerButtonMap.ButtonT) &&  
+                            IsPressed(MoveControllerButtonMap.ButtonT));
+            case NVRButtons.Grip:
+                return (!WasPressed(MoveControllerButtonMap.ButtonT) &&  
+                            IsPressed(MoveControllerButtonMap.ButtonT));
+            case NVRButtons.ApplicationMenu:
+                return (!WasPressed(MoveControllerButtonMap.ButtonMove) &&  
+                            IsPressed(MoveControllerButtonMap.ButtonMove));
+            default:
+                throw new ArgumentException("Get press down for unsupported button");
+        }
     }
 
     //--------------------------------------------------------------------------
     
     public override bool GetPressUp(NVRButtons button)
     {
-        return false;
+        buttonState = PS4Input.MoveGetButtons(deviceSlot, deviceIndex);
+
+        switch (button) {
+            case NVRButtons.Trigger:
+                return (WasPressed(MoveControllerButtonMap.ButtonT) &&  
+                            !IsPressed(MoveControllerButtonMap.ButtonT));
+            case NVRButtons.Grip:
+                return (WasPressed(MoveControllerButtonMap.ButtonT) &&  
+                            !IsPressed(MoveControllerButtonMap.ButtonT));
+            case NVRButtons.ApplicationMenu:
+                return (WasPressed(MoveControllerButtonMap.ButtonMove) &&  
+                            !IsPressed(MoveControllerButtonMap.ButtonMove));
+            default:
+                throw new ArgumentException("Get press up for unsupported button");
+        }
     }
 
     //--------------------------------------------------------------------------
 
     public override bool GetPress(NVRButtons button)
     {
-        return false;
+        buttonState = PS4Input.MoveGetButtons(deviceSlot, deviceIndex);
+
+        switch (button) {
+            case NVRButtons.Trigger:
+                return IsPressed(MoveControllerButtonMap.ButtonT);
+            case NVRButtons.Grip:
+                return IsPressed(MoveControllerButtonMap.ButtonT);
+            case NVRButtons.ApplicationMenu:
+                return IsPressed(MoveControllerButtonMap.ButtonMove);
+            default:
+                throw new ArgumentException("Get press for unsupported button");
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -256,9 +323,11 @@ public class NVRPSVRInputDevice : NVRInputDevice
         if (numInitializedInputDevices == 0) {
             // This is the first move controller so check the primary handles
             deviceHandle = primaryHandles[0];
+            deviceIndex = 0;
         } else {
             // This is the second move controller so check the secondary handles
             deviceHandle = secondaryHandles[0];
+            deviceIndex = 1;
         }
 
         // Get the tracking for the primary Move device, and wait for it to start
@@ -313,6 +382,20 @@ public class NVRPSVRInputDevice : NVRInputDevice
     }
 
     //--------------------------------------------------------------------------
+
+    private bool IsPressed(MoveControllerButtonMap button)
+    {
+        return (buttonState & ((int) button)) != 0;
+    }
+
+    //--------------------------------------------------------------------------
+
+    private bool WasPressed(MoveControllerButtonMap button)
+    {
+        return (prevButtonState & ((int) button)) != 0;
+    }
+
+    //--------------------------------------------------------------------------
     // Messages
     //--------------------------------------------------------------------------
 
@@ -345,6 +428,14 @@ public class NVRPSVRInputDevice : NVRInputDevice
     {
         // TODO: This needs to move to a non time-dependent update method
         UpdateTransforms(); 
+    }
+
+    //--------------------------------------------------------------------------
+
+    void LateUpdate()
+    {
+        // Turn over the frame once 
+        prevButtonState = buttonState;
     }
 
     //--------------------------------------------------------------------------

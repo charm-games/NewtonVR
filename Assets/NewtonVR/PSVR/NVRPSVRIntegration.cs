@@ -227,17 +227,22 @@ public class NVRPSVRIntegration : NVRIntegration
 
     private void DeinitHMD()
     {
-        Debug.Log("Unloading HMD device by loading device " + kNoneDeviceName);
+        // TODO: Figure out the appropriate handling for PSVR only titles in
+        // this situation. Loading the None device causes us to lose the headset
+        // and not be able to get it back without some flat UI.
+        return;
 
-        // Unload the PSVR by loading the None device
-        XRSettings.LoadDeviceByName(kNoneDeviceName);
+        //Debug.Log("Unloading HMD device by loading device " + kNoneDeviceName);
 
-        // WORKAROUND: At the moment the device is created at the end of the frame so
-        // we need to wait a frame until the VR device is changed back to 'None', and
-        // then reset the Main Camera's FOV and Aspect
-        // TODO: If we move to Unity 2018.1 or greater then use the
-        // XRDevice.deviceLoaded event instead of this
-        CharmGames.Form.DelayedCallback.FrameDelayedCallback(OnHMDUnloaded, 1);
+        //// Unload the PSVR by loading the None device
+        //XRSettings.LoadDeviceByName(kNoneDeviceName);
+
+        //// WORKAROUND: At the moment the device is created at the end of the frame so
+        //// we need to wait a frame until the VR device is changed back to 'None', and
+        //// then reset the Main Camera's FOV and Aspect
+        //// TODO: If we move to Unity 2018.1 or greater then use the
+        //// XRDevice.deviceLoaded event instead of this
+        //CharmGames.Form.DelayedCallback.FrameDelayedCallback(OnHMDUnloaded, 1);
     }
 
     //--------------------------------------------------------------------------
