@@ -173,7 +173,7 @@ public class NVRPSVRInputDevice : NVRInputDevice
 
     public override float GetAxis1D(NVRButtons button)
     {
-        const float kMaxButtonPress = 65535;
+        const float kMaxButtonPress = 255;
         float buttonVal = PS4Input.MoveGetAnalogButton(deviceSlot, deviceIndex);
         float normalizedVal = (buttonVal / kMaxButtonPress);
 
