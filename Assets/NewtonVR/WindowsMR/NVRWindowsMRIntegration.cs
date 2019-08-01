@@ -144,7 +144,7 @@ public class NVRWindowsMRIntegration : NVRIntegration
 
     public override Transform GetOrigin()
     {
-        return Player.transform;
+        return rigObj.transform;
     }
 
     //--------------------------------------------------------------------------

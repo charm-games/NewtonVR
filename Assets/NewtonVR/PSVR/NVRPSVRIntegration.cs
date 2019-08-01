@@ -59,6 +59,8 @@ public class NVRPSVRIntegration : NVRIntegration
      */
     private bool showHmdViewOnMonitor = true; 
 
+    private float headHeight = 1.5f;
+
     //--------------------------------------------------------------------------
     // Public member variables
     //--------------------------------------------------------------------------
@@ -80,6 +82,12 @@ public class NVRPSVRIntegration : NVRIntegration
         rigObj = player.gameObject;
 
         InitHMD();
+
+        // HACK:
+        // PSVR puts us on the floor
+        rigObj.transform.position = new Vector3(rigObj.transform.position.x,
+                                                rigObj.transform.position.y + headHeight,
+                                                rigObj.transform.position.z);
     }
 
     //--------------------------------------------------------------------------
@@ -129,24 +137,24 @@ public class NVRPSVRIntegration : NVRIntegration
 
     public override void MoveRig(Transform transform)
     {
-        Player.transform.position   = transform.position;
-        Player.transform.rotation   = transform.rotation;
-        Player.transform.localScale = transform.localScale;
+        rigObj.transform.position   = transform.position + new Vector3(0, headHeight, 0);
+        rigObj.transform.rotation   = transform.rotation;
+        rigObj.transform.localScale = transform.localScale;
     }
 
     //--------------------------------------------------------------------------
 
     public override void MoveRig(Vector3 position, Quaternion orientation)
     {
-        Player.transform.position = position;
-        Player.transform.rotation = orientation;
+        rigObj.transform.position = position + new Vector3(0, headHeight, 0);
+        rigObj.transform.rotation = orientation;
     }
 
     //--------------------------------------------------------------------------
 
     public override Transform GetOrigin()
     {
-        return Player.transform;
+        return rigObj.transform;
     }
 
     //--------------------------------------------------------------------------
