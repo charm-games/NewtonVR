@@ -24,6 +24,7 @@ public class NVRWindowsMRIntegration : NVRIntegration
     // Private member variables
     //--------------------------------------------------------------------------
 
+    private bool initialized = false;
     private GameObject rigObj = null;
 
     private List<UnityAction> newPosesCallbacks = null;
@@ -68,7 +69,23 @@ public class NVRWindowsMRIntegration : NVRIntegration
         rigObj = player.gameObject;
 
         InitPoseCallback();
+        initialized = true;
+        InvokeOnInitializedEvent();
 #endif // UNITY_WSA
+    }
+
+    //--------------------------------------------------------------------------
+
+    public override void DeInitialize()
+    {
+        // no-op
+    }
+
+    //--------------------------------------------------------------------------
+
+    public override bool IsInit()
+    {
+        return initialized;
     }
 
     //--------------------------------------------------------------------------
