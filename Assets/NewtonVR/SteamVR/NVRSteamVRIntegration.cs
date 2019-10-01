@@ -171,9 +171,16 @@ namespace NewtonVR
         }
 
         //--------------------------------------------------------------------------
+
+        public override void Recenter()
+        {
+            InputTracking.Recenter();
+        }
+
+        //--------------------------------------------------------------------------
         // Private methods 
         //--------------------------------------------------------------------------
-    
+
         private Valve.VR.EVREye XREyeIndexToSteamVREyeIndex(XRNode eyeIndex)
         {
             switch (eyeIndex) {
