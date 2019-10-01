@@ -483,6 +483,14 @@ public class NVRPSVRInputDevice : NVRInputDevice
             throw new NotImplementedException();
         }
     }
+    
+    public override bool IsInitialized
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     public override float GetAxis1D(NVRButtons button)
     {
