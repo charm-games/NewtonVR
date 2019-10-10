@@ -209,6 +209,18 @@ public class NVRPSVRInputDevice : NVRInputDevice
             case NVRButtons.ApplicationMenu:
                 return (!WasPressed(MoveControllerButtonMap.ButtonMove) &&  
                             IsPressed(MoveControllerButtonMap.ButtonMove));
+            case NVRButtons.A:
+                return (!WasPressed(MoveControllerButtonMap.ButtonTriangle) &&  
+                            IsPressed(MoveControllerButtonMap.ButtonTriangle));
+            case NVRButtons.B:
+                return (!WasPressed(MoveControllerButtonMap.ButtonCircle) &&  
+                            IsPressed(MoveControllerButtonMap.ButtonCircle));
+            case NVRButtons.Y:
+                return (!WasPressed(MoveControllerButtonMap.ButtonSquare) &&  
+                            IsPressed(MoveControllerButtonMap.ButtonSquare));
+            case NVRButtons.X:
+                return (!WasPressed(MoveControllerButtonMap.ButtonCross) &&  
+                            IsPressed(MoveControllerButtonMap.ButtonCross));
             default:
                 throw new ArgumentException("Get press down for unsupported button");
         }
@@ -233,6 +245,18 @@ public class NVRPSVRInputDevice : NVRInputDevice
             case NVRButtons.ApplicationMenu:
                 return (WasPressed(MoveControllerButtonMap.ButtonMove) &&  
                             !IsPressed(MoveControllerButtonMap.ButtonMove));
+            case NVRButtons.A:
+                return (WasPressed(MoveControllerButtonMap.ButtonTriangle) &&  
+                            !IsPressed(MoveControllerButtonMap.ButtonTriangle));
+            case NVRButtons.B:
+                return (WasPressed(MoveControllerButtonMap.ButtonCircle) &&  
+                            !IsPressed(MoveControllerButtonMap.ButtonCircle));
+            case NVRButtons.Y:
+                return (WasPressed(MoveControllerButtonMap.ButtonSquare) &&  
+                            !IsPressed(MoveControllerButtonMap.ButtonSquare));
+            case NVRButtons.X:
+                return (WasPressed(MoveControllerButtonMap.ButtonCross) &&  
+                            !IsPressed(MoveControllerButtonMap.ButtonCross));
             default:
                 throw new ArgumentException("Get press up for unsupported button");
         }
@@ -253,6 +277,14 @@ public class NVRPSVRInputDevice : NVRInputDevice
                 return IsPressed(MoveControllerButtonMap.ButtonTriangle);
             case NVRButtons.ApplicationMenu:
                 return IsPressed(MoveControllerButtonMap.ButtonMove);
+            case NVRButtons.A:
+                return IsPressed(MoveControllerButtonMap.ButtonTriangle);
+            case NVRButtons.B:
+                return IsPressed(MoveControllerButtonMap.ButtonCircle);
+            case NVRButtons.Y:
+                return IsPressed(MoveControllerButtonMap.ButtonSquare);
+            case NVRButtons.X:
+                return IsPressed(MoveControllerButtonMap.ButtonCross);
             default:
                 throw new ArgumentException("Get press for unsupported button");
         }
