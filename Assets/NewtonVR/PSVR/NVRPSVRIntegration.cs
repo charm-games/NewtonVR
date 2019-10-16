@@ -54,12 +54,18 @@ public class NVRPSVRIntegration : NVRIntegration
      */
     private float renderScale = 1.4f; 
 
+    private int hmdHandle = 0;
+
     /**
      * Set this to false to use the monitor/display as the Social Screen
      */
     private bool showHmdViewOnMonitor = true; 
 
-    private float headHeight = 1.5f;
+    private GameObject headHeightOffset = null;
+
+    private bool trackingInitialized = false;
+
+    private static float headHeight = 1.5f;
 
     //--------------------------------------------------------------------------
     // Public member variables
@@ -83,11 +89,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
         InitHMD();
 
-        // HACK:
-        // PSVR puts us on the floor
-        rigObj.transform.position = new Vector3(rigObj.transform.position.x,
-                                                rigObj.transform.position.y + headHeight,
-                                                rigObj.transform.position.z);
+        SetHeadHeight(headHeight);
     }
 
     //--------------------------------------------------------------------------
@@ -137,7 +139,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
     public override void MoveRig(Transform transform)
     {
-        rigObj.transform.position   = transform.position + new Vector3(0, headHeight, 0);
+        rigObj.transform.position   = transform.position; 
         rigObj.transform.rotation   = transform.rotation;
         rigObj.transform.localScale = transform.localScale;
     }
@@ -146,7 +148,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
     public override void MoveRig(Vector3 position, Quaternion orientation)
     {
-        rigObj.transform.position = position + new Vector3(0, headHeight, 0);
+        rigObj.transform.position = position;
         rigObj.transform.rotation = orientation;
     }
 
@@ -197,6 +199,34 @@ public class NVRPSVRIntegration : NVRIntegration
     }
 
     //--------------------------------------------------------------------------
+
+    public override void SetHeadHeight(float newHeadHeight)
+    {
+        headHeight = newHeadHeight;
+
+        if (headHeightOffset == null) {
+            headHeightOffset = new GameObject("HeadHeightOffset");
+            headHeightOffset.transform.parent = rigObj.transform;
+            headHeightOffset.transform.localPosition = Vector3.zero;
+            headHeightOffset.transform.localRotation = Quaternion.identity;
+            rigObj.GetComponent<NVRPlayer>().Head.transform.parent = headHeightOffset.transform;
+            rigObj.GetComponent<NVRPlayer>().LeftHand.transform.parent = headHeightOffset.transform;
+            rigObj.GetComponent<NVRPlayer>().RightHand.transform.parent = headHeightOffset.transform;
+        }
+
+        headHeightOffset.transform.localPosition = new Vector3(0,
+                                                               headHeight,
+                                                               0);
+    }
+
+    //--------------------------------------------------------------------------
+
+    public override void Update()
+    {
+        UpdateTracking();
+    }
+
+    //--------------------------------------------------------------------------
     // Private methods 
     //--------------------------------------------------------------------------
 
@@ -226,6 +256,8 @@ public class NVRPSVRIntegration : NVRIntegration
         XRSettings.enabled = true;
         XRSettings.eyeTextureResolutionScale = renderScale;
         XRSettings.showDeviceView = showHmdViewOnMonitor;
+
+        hmdHandle = PlayStationVR.GetHmdHandle();
 
         initialized = true;
         InvokeOnInitializedEvent();
@@ -381,6 +413,53 @@ public class NVRPSVRIntegration : NVRIntegration
         }
     }
 #endif
+
+    //--------------------------------------------------------------------------
+
+    private void UpdateTracking()
+    {
+#if UNITY_PS4
+        if (trackingInitialized) {
+            return;
+        }
+
+        // Get the tracking status 
+        PlayStationVRTrackingStatus trackingStatus = 
+                                        PlayStationVRTrackingStatus.NotStarted;
+        PlayStationVRResult result = 
+            Tracker.GetTrackedDeviceStatus(hmdHandle, out trackingStatus);
+
+        if (result != PlayStationVRResult.Ok) {
+            throw new Exception("Error getting PSVR tracking status: " + 
+                                result.ToString());
+        }
+
+        PlayStationVRTrackingQuality trackingQuality = 
+                                            PlayStationVRTrackingQuality.None;
+
+        result = Tracker.GetTrackedDevicePositionQuality(hmdHandle, 
+                                                         out trackingQuality);
+
+        if (result != PlayStationVRResult.Ok) {
+            throw new Exception("Error getting PSVR tracking quality: " + 
+                                result.ToString());
+        }
+
+        // Catch the first time tracking is established
+        if (trackingStatus == PlayStationVRTrackingStatus.Tracking && 
+                trackingQuality == PlayStationVRTrackingQuality.Full) {
+
+            // Once tracking is established, the HMD gets moved around based on
+            // inaccurate camera data. Call Recenter to reset it to the rig origin 
+            InputTracking.Recenter();
+
+            trackingInitialized = true;
+
+            Debug.Log("PSVR Tracking established");
+        }
+
+#endif // UNITY_PS4
+    }
 
     //--------------------------------------------------------------------------
 }

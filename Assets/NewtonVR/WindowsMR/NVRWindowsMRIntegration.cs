@@ -167,6 +167,13 @@ public class NVRWindowsMRIntegration : NVRIntegration
     }
 
     //--------------------------------------------------------------------------
+    
+    public override void SetHeadHeight(float headHeight)
+    {
+        // no-op on windowsMR
+    }
+
+    //--------------------------------------------------------------------------
     // Private methods 
     //--------------------------------------------------------------------------
 

@@ -56,5 +56,11 @@ namespace NewtonVR
         public abstract Matrix4x4 GetEyeProjectionMatrix(XRNode eye,
                                                          float  nearZ,
                                                          float  farZ);
+
+        public abstract void SetHeadHeight(float headHeight);
+
+        public virtual void Update()
+        {
+        }
     }
 }

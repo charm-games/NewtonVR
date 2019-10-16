@@ -209,6 +209,13 @@ namespace NewtonVR
         }
 
         //--------------------------------------------------------------------------
+    
+        public override void SetHeadHeight(float headHeight)
+        {
+            // no-op on oculus
+        }
+
+        //--------------------------------------------------------------------------
     }
 
 }
@@ -284,6 +291,12 @@ namespace NewtonVR
                                                          float  farZ)
         {
             return Matrix4x4.identity;
+        }
+
+        //--------------------------------------------------------------------------
+        
+        public override void SetHeadHeight(float headHeight)
+        {
         }
 
         //--------------------------------------------------------------------------
