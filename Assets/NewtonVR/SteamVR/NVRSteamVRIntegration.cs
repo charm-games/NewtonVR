@@ -137,7 +137,7 @@ namespace NewtonVR
 
         public override Transform GetOrigin()
         {
-            return SteamVR_Render.Top().origin;
+            return Player.transform;
         }
 
         //--------------------------------------------------------------------------
