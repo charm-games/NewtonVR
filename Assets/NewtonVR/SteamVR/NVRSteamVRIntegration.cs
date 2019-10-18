@@ -60,7 +60,19 @@ namespace NewtonVR
 
         public override void DeInitialize()
         {
-            // no-op
+            if (SteamVR_Render.instance != null) {
+                // This must destroy immediately to avoid a race condition with 
+                // the new rig being initialized on scene change.
+                // SteamVR_Render must have the same DontDestroyOnLoad status as the 
+                // PlayerRig to ensure height adjustment happens correctly through recentering.
+                // If the destroy call here is delayed, we may have a race condition where
+                // the next rig initialization sets the SteamVR_Render object to 
+                // DontDestroyOnLoad before the Destroy is fired, thereby destroying
+                // the SteamVR_Render instance that was supposed to stick around.
+                // The rig and the SteamVR_Render objects must be initialized and destroyed
+                // together.
+                GameObject.DestroyImmediate(SteamVR_Render.instance.gameObject);
+            }
         }
 
         public override bool IsInit()

@@ -368,6 +368,7 @@ namespace NewtonVR
 
         private void OnDestroy()
         {
+            Integration.DeInitialize();
             Instances.Remove(this);
         }
 
