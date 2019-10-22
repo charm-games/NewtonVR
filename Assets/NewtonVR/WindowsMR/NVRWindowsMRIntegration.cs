@@ -144,7 +144,7 @@ public class NVRWindowsMRIntegration : NVRIntegration
 
     public override Transform GetOrigin()
     {
-        return Player.transform;
+        return rigObj.transform;
     }
 
     //--------------------------------------------------------------------------
@@ -171,6 +171,13 @@ public class NVRWindowsMRIntegration : NVRIntegration
     public override void Recenter()
     {
         InputTracking.Recenter();
+    }
+
+    //--------------------------------------------------------------------------
+    
+    public override void SetHeadHeight(float headHeight)
+    {
+        // no-op on windowsMR
     }
 
     //--------------------------------------------------------------------------

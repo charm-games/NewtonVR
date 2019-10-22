@@ -19,6 +19,8 @@ namespace NewtonVR
 
         private bool RenderModelInitialized = false;
 
+        private bool isInitialized = false;
+
         private Dictionary<NVRButtons, EVRButtonId> ButtonMapping = new Dictionary<NVRButtons, EVRButtonId>(new NVRButtonsComparer());
 
         public override void Initialize(NVRHand hand)
@@ -168,6 +170,14 @@ namespace NewtonVR
             }
         }
 
+        public override bool IsInitialized
+        {
+            get
+            {
+                return isInitialized;
+            }
+        }
+
         public override GameObject SetupDefaultRenderModel()
         {
             GameObject renderModel = new GameObject("Render Model for " + Hand.gameObject.name);
@@ -195,6 +205,9 @@ namespace NewtonVR
             {
                 Hand.Initialize();
             }
+
+            // NOTE: This maybe could go at the end of the Initialize call
+            isInitialized = true;
         }
 
         private void SetDeviceIndex(int index)
@@ -435,6 +448,14 @@ namespace NewtonVR
             {
                 PrintNotEnabledError();
                 return false;
+            }
+        }
+
+        public override bool IsInitialized
+        {
+            get
+            {
+                throw new NotImplementedException();
             }
         }
 

@@ -216,6 +216,13 @@ namespace NewtonVR
         }
 
         //--------------------------------------------------------------------------
+        
+        public override void SetHeadHeight(float headHeight)
+        {
+            // no-op on oculus
+        }
+
+        //--------------------------------------------------------------------------
     }
 
 }
@@ -225,6 +232,19 @@ namespace NewtonVR
     public class NVROculusIntegration : NVRIntegration
     {
         public override void Initialize(NVRPlayer player)
+        {
+        }
+
+        public override void DeInitialize()
+        {
+        }
+
+        public override bool IsInit()
+        {
+            return false;
+        }
+
+        public override void DontDestroyOnLoad()
         {
         }
 
@@ -247,6 +267,10 @@ namespace NewtonVR
         }
 
         public override void MoveRig(Transform transform)
+        {
+        }
+
+        public override void MoveRig(Vector3 position, Quaternion orientation)
         {
         }
 
@@ -274,6 +298,12 @@ namespace NewtonVR
                                                          float  farZ)
         {
             return Matrix4x4.identity;
+        }
+
+        //--------------------------------------------------------------------------
+        
+        public override void SetHeadHeight(float headHeight)
+        {
         }
 
         //--------------------------------------------------------------------------

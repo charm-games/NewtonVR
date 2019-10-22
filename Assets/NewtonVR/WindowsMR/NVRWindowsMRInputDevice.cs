@@ -6,7 +6,6 @@
 // Using directives 
 //------------------------------------------------------------------------------
 
-//using HoloToolkit.Unity;
 using NewtonVR;
 using System;
 using System.Collections;
@@ -64,6 +63,7 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
     private ControllerState prevControllerState;
 
     private bool isTracking = false;
+    private bool isInitialized = false;
 
     private GameObject renderModel = null;
 
@@ -99,6 +99,8 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
         prevControllerState = controllerState;
 
         SetupInputCallbacks();
+
+        isInitialized = true;
 #endif // UNITY_WSA
     }
 
@@ -109,6 +111,16 @@ public class NVRWindowsMRInputDevice : NVRInputDevice
         get
         {
             return isTracking;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+
+    public override bool IsInitialized
+    {
+        get
+        {
+            return isInitialized;
         }
     }
 
