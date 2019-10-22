@@ -199,6 +199,13 @@ public class NVRPSVRIntegration : NVRIntegration
     }
 
     //--------------------------------------------------------------------------
+        
+    public override void Recenter()
+    {
+        InputTracking.Recenter();
+    }
+
+    //--------------------------------------------------------------------------
 
     public override void SetHeadHeight(float newHeadHeight)
     {
@@ -330,7 +337,7 @@ public class NVRPSVRIntegration : NVRIntegration
         Debug.LogFormat("NVRPSVRIntegration.OnSystemServiceEvent: {0}", eventType);
 
         if (eventType == Utility.sceSystemServiceEventType.RESET_VR_POSITION) {
-            InputTracking.Recenter();
+            Recenter();
         }
     }
 #endif

@@ -306,6 +306,12 @@ namespace NewtonVR
 
         //--------------------------------------------------------------------------
 
+        public override void Recenter()
+        {
+        }
+
+        //--------------------------------------------------------------------------
+
         public override void SetHeadHeight(float headHeight)
         {
         }
