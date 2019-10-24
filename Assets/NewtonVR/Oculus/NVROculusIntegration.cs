@@ -216,13 +216,6 @@ namespace NewtonVR
         }
 
         //--------------------------------------------------------------------------
-        
-        public override void SetHeadHeight(float headHeight)
-        {
-            // no-op on oculus
-        }
-
-        //--------------------------------------------------------------------------
     }
 
 }
@@ -303,12 +296,6 @@ namespace NewtonVR
         //--------------------------------------------------------------------------
         
         public override void Recenter()
-        {
-        }
-
-        //--------------------------------------------------------------------------
-
-        public override void SetHeadHeight(float headHeight)
         {
         }
 

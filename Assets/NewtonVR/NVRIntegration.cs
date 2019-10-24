@@ -59,8 +59,6 @@ namespace NewtonVR
                                                          float  nearZ,
                                                          float  farZ);
 
-        public abstract void SetHeadHeight(float headHeight);
-
         public virtual void Update()
         {
         }

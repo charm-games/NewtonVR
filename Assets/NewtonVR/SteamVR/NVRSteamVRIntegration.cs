@@ -174,16 +174,8 @@ namespace NewtonVR
 
         public override void Recenter()
         {
-            InputTracking.Recenter();
         }
     
-        //--------------------------------------------------------------------------
-
-        public override void SetHeadHeight(float headHeight)
-        {
-            // no-op on steamVR
-        }
-
         //--------------------------------------------------------------------------
         // Private methods 
         //--------------------------------------------------------------------------
@@ -307,12 +299,6 @@ namespace NewtonVR
         //--------------------------------------------------------------------------
 
         public override void Recenter()
-        {
-        }
-
-        //--------------------------------------------------------------------------
-
-        public override void SetHeadHeight(float headHeight)
         {
         }
 

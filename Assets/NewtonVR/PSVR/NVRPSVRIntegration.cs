@@ -65,8 +65,6 @@ public class NVRPSVRIntegration : NVRIntegration
 
     private bool trackingInitialized = false;
 
-    private static float headHeight = 1.5f;
-
     //--------------------------------------------------------------------------
     // Public member variables
     //--------------------------------------------------------------------------
@@ -88,8 +86,6 @@ public class NVRPSVRIntegration : NVRIntegration
         rigObj = player.gameObject;
 
         InitHMD();
-
-        SetHeadHeight(headHeight);
     }
 
     //--------------------------------------------------------------------------
@@ -205,26 +201,7 @@ public class NVRPSVRIntegration : NVRIntegration
         InputTracking.Recenter();
     }
 
-    //--------------------------------------------------------------------------
-
-    public override void SetHeadHeight(float newHeadHeight)
-    {
-        headHeight = newHeadHeight;
-
-        if (headHeightOffset == null) {
-            headHeightOffset = new GameObject("HeadHeightOffset");
-            headHeightOffset.transform.parent = rigObj.transform;
-            headHeightOffset.transform.localPosition = Vector3.zero;
-            headHeightOffset.transform.localRotation = Quaternion.identity;
-            rigObj.GetComponent<NVRPlayer>().Head.transform.parent = headHeightOffset.transform;
-            rigObj.GetComponent<NVRPlayer>().LeftHand.transform.parent = headHeightOffset.transform;
-            rigObj.GetComponent<NVRPlayer>().RightHand.transform.parent = headHeightOffset.transform;
-        }
-
-        headHeightOffset.transform.localPosition = new Vector3(0,
-                                                               headHeight,
-                                                               0);
-    }
+    
 
     //--------------------------------------------------------------------------
 
@@ -257,6 +234,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
     private void OnHMDLoaded()
     {
+#if UNITY_PS4
         Debug.Log("HMD loaded. Setting XRSettings.");
 
         // Settings must be changed only after the HMD device is loaded
@@ -268,6 +246,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
         initialized = true;
         InvokeOnInitializedEvent();
+#endif // UNITY_PS4
     }
 
     //--------------------------------------------------------------------------
