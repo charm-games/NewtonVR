@@ -29,6 +29,16 @@ namespace NewtonVR
             }
         }
 
+        public virtual void AddOnDeviceConnectedListener(UnityAction callback)
+        {
+            // no op
+        }
+
+        public virtual void RemoveOnDeviceConnectedListener(UnityAction callback)
+        {
+            // no op
+        }
+
         public abstract void DontDestroyOnLoad();
 
         public abstract void Initialize(NVRPlayer player);
