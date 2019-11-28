@@ -29,6 +29,26 @@ namespace NewtonVR
             }
         }
 
+        public virtual void AddOnDeviceConnectedListener(UnityAction callback)
+        {
+            // no op
+        }
+
+        public virtual void RemoveOnDeviceConnectedListener(UnityAction callback)
+        {
+            // no op
+        }
+
+        public virtual List<string> GetConnectedControllerDevices()
+        {
+            List<string> controllerDeviceNames
+                = new List<string>();
+
+            controllerDeviceNames.AddRange(UnityEngine.Input.GetJoystickNames());
+            
+            return controllerDeviceNames;
+        }
+
         public abstract void DontDestroyOnLoad();
 
         public abstract void Initialize(NVRPlayer player);
