@@ -244,6 +244,8 @@ public class NVRPSVRIntegration : NVRIntegration
         XRSettings.eyeTextureResolutionScale = renderScale;
         XRSettings.showDeviceView = showHmdViewOnMonitor;
 
+        PlayStationVRSettings.minOutputColor = new Color(.01f, .01f, .01f);
+
         hmdHandle = PlayStationVR.GetHmdHandle();
 
         initialized = true;
