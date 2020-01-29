@@ -65,6 +65,9 @@ public class NVRPSVRIntegration : NVRIntegration
 
     private bool trackingInitialized = false;
 
+    private bool middleOfInitializing = false;
+    private bool requestedShutdown = false;
+
     //--------------------------------------------------------------------------
     // Public member variables
     //--------------------------------------------------------------------------
@@ -201,8 +204,6 @@ public class NVRPSVRIntegration : NVRIntegration
         InputTracking.Recenter();
     }
 
-    
-
     //--------------------------------------------------------------------------
 
     public override void Update()
@@ -216,6 +217,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
     private void InitHMD()
     {
+        middleOfInitializing = true;
 #if UNITY_PS4
         // Register the callbacks needed to detect resetting the HMD
         Utility.onSystemServiceEvent += OnSystemServiceEvent;
@@ -247,28 +249,39 @@ public class NVRPSVRIntegration : NVRIntegration
         initialized = true;
         InvokeOnInitializedEvent();
 #endif // UNITY_PS4
+        middleOfInitializing = false;
+        if (requestedShutdown)
+        {
+            requestedShutdown = false;
+            DeinitHMD();
+        }
     }
 
     //--------------------------------------------------------------------------
 
     private void DeinitHMD()
     {
+        if (middleOfInitializing)
+        {
+            requestedShutdown = true;
+            return;
+        }
         // TODO: Figure out the appropriate handling for PSVR only titles in
         // this situation. Loading the None device causes us to lose the headset
         // and not be able to get it back without some flat UI.
-        return;
+        //return;
 
-        //Debug.Log("Unloading HMD device by loading device " + kNoneDeviceName);
+        Debug.Log("Unloading HMD device by loading device " + kNoneDeviceName);
 
-        //// Unload the PSVR by loading the None device
-        //XRSettings.LoadDeviceByName(kNoneDeviceName);
+        // Unload the PSVR by loading the None device
+        XRSettings.LoadDeviceByName(kNoneDeviceName);
 
         //// WORKAROUND: At the moment the device is created at the end of the frame so
         //// we need to wait a frame until the VR device is changed back to 'None', and
         //// then reset the Main Camera's FOV and Aspect
         //// TODO: If we move to Unity 2018.1 or greater then use the
         //// XRDevice.deviceLoaded event instead of this
-        //CharmGames.Form.DelayedCallback.FrameDelayedCallback(OnHMDUnloaded, 1);
+        CharmGames.Form.DelayedCallback.FrameDelayedCallback(OnHMDUnloaded, 1);
     }
 
     //--------------------------------------------------------------------------
@@ -291,6 +304,8 @@ public class NVRPSVRIntegration : NVRIntegration
         Camera.main.ResetAspect();
 
         initialized = false;
+
+        SetupHmdDevice();
     }
 
     //--------------------------------------------------------------------------
@@ -370,6 +385,17 @@ public class NVRPSVRIntegration : NVRIntegration
                 }
                 handledEvent = true;
                 break;
+            case PlayStationVR.deviceEventType.HmdHandleInvalid:
+                // Unity will handle this automatically, please see API documentation
+                Debug.LogFormat("### OnDeviceEvent: HmdHandleInvalid: {0}", value);
+                break;
+            case PlayStationVR.deviceEventType.DeviceRestarted:
+                // Unity will handle this automatically, please see API documentation
+                Debug.LogFormat("### OnDeviceEvent: DeviceRestarted: {0}", value);
+                break;
+            case PlayStationVR.deviceEventType.DeviceStartedError:
+                Debug.LogFormat("### OnDeviceEvent: DeviceStartedError: {0}", value);
+                break;
             default:
                 throw new ArgumentOutOfRangeException("eventType", eventType, null);
         }
@@ -416,8 +442,9 @@ public class NVRPSVRIntegration : NVRIntegration
             Tracker.GetTrackedDeviceStatus(hmdHandle, out trackingStatus);
 
         if (result != PlayStationVRResult.Ok) {
-            throw new Exception("Error getting PSVR tracking status: " + 
-                                result.ToString());
+            Debug.LogError("Error getting PSVR tracking status: " + 
+                            result.ToString());
+            return;
         }
 
         PlayStationVRTrackingQuality trackingQuality = 
@@ -427,8 +454,9 @@ public class NVRPSVRIntegration : NVRIntegration
                                                          out trackingQuality);
 
         if (result != PlayStationVRResult.Ok) {
-            throw new Exception("Error getting PSVR tracking quality: " + 
+            Debug.LogError("Error getting PSVR tracking quality: " + 
                                 result.ToString());
+            return;
         }
 
         // Catch the first time tracking is established
