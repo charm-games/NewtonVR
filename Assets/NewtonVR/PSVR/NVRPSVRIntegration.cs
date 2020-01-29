@@ -95,7 +95,8 @@ public class NVRPSVRIntegration : NVRIntegration
 
     public override void DeInitialize()
     {
-        DeinitHMD();
+        UnsubscribeFromServiceAndDeviceEvents();
+        initialized = false;
     }
 
     //--------------------------------------------------------------------------
@@ -220,8 +221,7 @@ public class NVRPSVRIntegration : NVRIntegration
         hmdIsInitializing = true;
 #if UNITY_PS4
         // Register the callbacks needed to detect resetting the HMD
-        Utility.onSystemServiceEvent += OnSystemServiceEvent;
-        PlayStationVR.onDeviceEvent += OnDeviceEvent;
+        SubscribeToServiceAndDeviceEvents();
 #endif // UNITY_PS4
         
         Debug.Log("Loading HMD device " + kPSVRDeviceName);
@@ -297,8 +297,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
 #if UNITY_PS4
         // Unregister the callbacks needed to detect resetting the HMD
-        Utility.onSystemServiceEvent -= OnSystemServiceEvent;
-        PlayStationVR.onDeviceEvent -= OnDeviceEvent;
+        UnsubscribeFromServiceAndDeviceEvents();
         PlayStationVR.SetOutputModeHMD(false, 120);
 #endif
 
@@ -308,6 +307,26 @@ public class NVRPSVRIntegration : NVRIntegration
         initialized = false;
 
         ShowHMDSetupDialogue();
+    }
+
+    //--------------------------------------------------------------------------
+
+    private void SubscribeToServiceAndDeviceEvents()
+    {
+#if UNITY_PS4
+        Utility.onSystemServiceEvent += OnSystemServiceEvent;
+        PlayStationVR.onDeviceEvent += OnDeviceEvent;
+#endif
+    }
+
+    //--------------------------------------------------------------------------
+
+    private void UnsubscribeFromServiceAndDeviceEvents()
+    {
+#if UNITY_PS4
+        Utility.onSystemServiceEvent -= OnSystemServiceEvent;
+        PlayStationVR.onDeviceEvent -= OnDeviceEvent;
+#endif
     }
 
     //--------------------------------------------------------------------------
@@ -345,6 +364,11 @@ public class NVRPSVRIntegration : NVRIntegration
     private bool OnDeviceEvent(PlayStationVR.deviceEventType eventType, int value)
     {
         var handledEvent = false;
+
+        if (!initialized)
+        {
+            return false;
+        }
 
         switch (eventType) {
             case PlayStationVR.deviceEventType.deviceStarted:

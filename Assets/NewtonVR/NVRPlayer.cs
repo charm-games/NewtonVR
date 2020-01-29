@@ -403,6 +403,7 @@ namespace NewtonVR
         private void OnDestroy()
         {
             Instances.Remove(this);
+            Integration.DeInitialize();
         }
 
         private void Update()
