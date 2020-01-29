@@ -88,7 +88,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
         rigObj = player.gameObject;
 
-        InitHMD();
+        ShowHMDSetupDialogue();
     }
 
     //--------------------------------------------------------------------------
