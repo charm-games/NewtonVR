@@ -65,8 +65,8 @@ public class NVRPSVRIntegration : NVRIntegration
 
     private bool trackingInitialized = false;
 
-    private bool middleOfInitializing = false;
-    private bool requestedShutdown = false;
+    private bool hmdIsInitializing = false;
+    private bool requestedHMDShutdown = false;
 
     //--------------------------------------------------------------------------
     // Public member variables
@@ -217,7 +217,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
     private void InitHMD()
     {
-        middleOfInitializing = true;
+        hmdIsInitializing = true;
 #if UNITY_PS4
         // Register the callbacks needed to detect resetting the HMD
         Utility.onSystemServiceEvent += OnSystemServiceEvent;
@@ -249,10 +249,10 @@ public class NVRPSVRIntegration : NVRIntegration
         initialized = true;
         InvokeOnInitializedEvent();
 #endif // UNITY_PS4
-        middleOfInitializing = false;
-        if (requestedShutdown)
+        hmdIsInitializing = false;
+        if (requestedHMDShutdown)
         {
-            requestedShutdown = false;
+            requestedHMDShutdown = false;
             DeinitHMD();
         }
     }
@@ -261,9 +261,9 @@ public class NVRPSVRIntegration : NVRIntegration
 
     private void DeinitHMD()
     {
-        if (middleOfInitializing)
+        if (hmdIsInitializing)
         {
-            requestedShutdown = true;
+            requestedHMDShutdown = true;
             return;
         }
         // TODO: Figure out the appropriate handling for PSVR only titles in
@@ -305,12 +305,12 @@ public class NVRPSVRIntegration : NVRIntegration
 
         initialized = false;
 
-        SetupHmdDevice();
+        ShowHMDSetupDialogue();
     }
 
     //--------------------------------------------------------------------------
 
-    private void SetupHmdDevice()
+    private void ShowHMDSetupDialogue()
     {
 #if UNITY_PS4
         // The HMD Setup Dialog is not displayed on the social screen in separate
@@ -362,7 +362,7 @@ public class NVRPSVRIntegration : NVRIntegration
                     // TRC R4026 suggests showing the HMD Setup Dialog if the 
                     // device status becomes non-ready
                     if (XRSettings.loadedDeviceName == kNoneDeviceName) {
-                        SetupHmdDevice();
+                        ShowHMDSetupDialogue();
                     } else {
                         DeinitHMD();
                     }
@@ -381,7 +381,7 @@ public class NVRPSVRIntegration : NVRIntegration
                 Debug.LogFormat("NVRPSVRIntegration.OnDeviceEvent: " + 
                                 "CameraChanged: {0}", value);
                 if (value == 0) {
-                    SetupHmdDevice();
+                    ShowHMDSetupDialogue();
                 }
                 handledEvent = true;
                 break;

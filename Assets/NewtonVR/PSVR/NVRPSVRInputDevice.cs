@@ -343,14 +343,19 @@ public class NVRPSVRInputDevice : NVRInputDevice
             yield return new WaitForSeconds(1.0f);
         }
 
-        if (PS4Input.MoveIsConnected(0, 0) == false) {
-            Debug.LogError("Trying to register the primary Move device, but it is not connected!");
-            yield break;
+        // Loop until both move devices are connected
+        while(PS4Input.MoveIsConnected(0, 0) == false)
+        {
+            Debug.LogError("Trying to register the primary Move device, " +
+                           "but it is not connected!");
+            yield return new WaitForSeconds(1f);
         }
 
-        if (PS4Input.MoveIsConnected(0, 1) == false) {
-            Debug.LogError("Trying to register the secondary Move device, but it is not connected!");
-            yield break;
+        while(PS4Input.MoveIsConnected(0, 1) == false)
+        {
+            Debug.LogError("Trying to register the secondary Move device, " +
+                           "but it is not connected!");
+            yield return new WaitForSeconds(1f);
         }
 
         // Get the handle for this move controller
