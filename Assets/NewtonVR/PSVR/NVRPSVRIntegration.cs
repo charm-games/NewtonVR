@@ -223,9 +223,14 @@ public class NVRPSVRIntegration : NVRIntegration
         // Register the callbacks needed to detect resetting the HMD
         SubscribeToServiceAndDeviceEvents();
 #endif // UNITY_PS4
-        
-        Debug.Log("Loading HMD device " + kPSVRDeviceName);
-        XRSettings.LoadDeviceByName(kPSVRDeviceName);
+
+        // No need to load device again if it's already loaded.
+        // Otherwise this causes a couple seconds hiccup / black screen
+        if (XRSettings.loadedDeviceName != kPSVRDeviceName)
+        {
+            Debug.Log("Loading HMD device " + kPSVRDeviceName);
+            XRSettings.LoadDeviceByName(kPSVRDeviceName);
+        }
 
         // TODO: If we move to Unity 2018.1 or greater then use the
         // XRDevice.deviceLoaded event instead of this
