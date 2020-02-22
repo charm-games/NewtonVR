@@ -250,6 +250,8 @@ public class NVRPSVRIntegration : NVRIntegration
         XRSettings.showDeviceView = showHmdViewOnMonitor;
 
         PlayStationVRSettings.minOutputColor = new Color(.01f, .01f, .01f);
+        PlayStationVRSettings.postReprojectionType = PlayStationVRPostReprojectionType.PerEye;
+        PlayStationVRSettings.postReprojectionRenderScale = renderScale;
 
         hmdHandle = PlayStationVR.GetHmdHandle();
 

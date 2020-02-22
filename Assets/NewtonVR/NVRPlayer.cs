@@ -38,8 +38,6 @@ namespace NewtonVR
         public bool VibrateOnHover = true;
         public int VelocityHistorySteps = 3;
 
-        public UnityEvent OnInitialized;
-
         [Space]
         public bool EnableEditorPlayerPreview = true;
         public Mesh EditorPlayerPreview;
@@ -166,7 +164,7 @@ namespace NewtonVR
         public NVRSDKIntegrations CurrentIntegrationType = NVRSDKIntegrations.None;
 
         protected NVRIntegration Integration;
-        protected event Action onIntegrationInitialized;
+        protected static event Action onIntegrationInitialized;
 
         private Dictionary<Collider, NVRHand> ColliderToHandMapping;
 
@@ -233,11 +231,6 @@ namespace NewtonVR
             if (Integration != null)
             {
                 Integration.Initialize(this);
-            }
-
-            if (OnInitialized != null)
-            {
-                OnInitialized.Invoke();
             }
         }
 
@@ -365,11 +358,11 @@ namespace NewtonVR
             }
         }
 
-        public void AddOnIntegrationInitializedListener(Action callback) {
+        public static void AddOnIntegrationInitializedListener(Action callback) {
             onIntegrationInitialized += callback;
         }
 
-        public void RemoveOnIntegrationInitializedListener(Action callback) {
+        public static void RemoveOnIntegrationInitializedListener(Action callback) {
             onIntegrationInitialized -= callback;
         }
 
