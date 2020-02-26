@@ -229,6 +229,8 @@ public class NVRPSVRIntegration : NVRIntegration
         if (XRSettings.loadedDeviceName != kPSVRDeviceName)
         {
             Debug.Log("Loading HMD device " + kPSVRDeviceName);
+            PlayStationVRSettings.postReprojectionType = PlayStationVRPostReprojectionType.PerEye;
+            PlayStationVRSettings.postReprojectionRenderScale = renderScale;
             XRSettings.LoadDeviceByName(kPSVRDeviceName);
         }
 
@@ -250,8 +252,6 @@ public class NVRPSVRIntegration : NVRIntegration
         XRSettings.showDeviceView = showHmdViewOnMonitor;
 
         PlayStationVRSettings.minOutputColor = new Color(.01f, .01f, .01f);
-        PlayStationVRSettings.postReprojectionType = PlayStationVRPostReprojectionType.PerEye;
-        PlayStationVRSettings.postReprojectionRenderScale = renderScale;
 
         hmdHandle = PlayStationVR.GetHmdHandle();
 
