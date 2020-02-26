@@ -229,8 +229,10 @@ public class NVRPSVRIntegration : NVRIntegration
         if (XRSettings.loadedDeviceName != kPSVRDeviceName)
         {
             Debug.Log("Loading HMD device " + kPSVRDeviceName);
+#if UNITY_PS4
             PlayStationVRSettings.postReprojectionType = PlayStationVRPostReprojectionType.PerEye;
             PlayStationVRSettings.postReprojectionRenderScale = renderScale;
+#endif // UNITY_PS4
             XRSettings.LoadDeviceByName(kPSVRDeviceName);
         }
 
