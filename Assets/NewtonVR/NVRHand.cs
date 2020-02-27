@@ -365,18 +365,20 @@ namespace NewtonVR
         {
             if (CurrentHandState == HandState.Idle)
             {
-                var hoveringEnumerator = CurrentlyHoveringOver.GetEnumerator();
-                int i = 0; 
-                while (hoveringEnumerator.MoveNext())
-                {
-                    UnityEngine.Profiling.Profiler.BeginSample("NVRHand.UpdateHovering - iteration " + i.ToString());
-                    var hoveringOver = hoveringEnumerator.Current;
-                    if (hoveringOver.Value.Count > 0)
-                    {
-                        hoveringOver.Key.HoveringUpdate(this, Time.time - hoveringOver.Value.OrderBy(colliderTime => colliderTime.Value).First().Value);
+                foreach (var hoveringOver in CurrentlyHoveringOver) {
+                    NVRInteractable hoveringOverInteractable = hoveringOver.Key;
+                    var hoverInstanceColliders = hoveringOver.Value;
+
+                    // Find the oldest collider time
+                    float oldestHoverTime = Mathf.Infinity;
+                    foreach (var collisionInstance in hoverInstanceColliders) {
+                        float hoverTime = collisionInstance.Value;
+                        if (hoverTime < oldestHoverTime) {
+                            oldestHoverTime = hoverTime;
+                        }
                     }
-                    UnityEngine.Profiling.Profiler.EndSample();
-                    ++i;
+
+                    hoveringOverInteractable.HoveringUpdate(this, Time.time - oldestHoverTime);
                 }
             }
         }

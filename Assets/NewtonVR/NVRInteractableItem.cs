@@ -218,14 +218,12 @@ namespace NewtonVR
 
         public override void HoveringUpdate(NVRHand hand, float forTime)
         {
-            UnityEngine.Profiling.Profiler.BeginSample("NVRInteractableItem.HoveringUpdate");
             base.HoveringUpdate(hand, forTime);
 
             if (OnHovering != null)
             {
                 OnHovering.Invoke();
             }
-            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         public override void ResetInteractable()
