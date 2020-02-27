@@ -325,6 +325,7 @@ namespace NewtonVR
 
         protected virtual void Update()
         {
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - Initialization");
             if (CurrentHandState == HandState.Uninitialized)
             {
                 if (InputDevice == null || InputDevice.ReadyToInitialize() == false)
@@ -337,16 +338,27 @@ namespace NewtonVR
                     return;
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateButtonStates");
             UpdateButtonStates();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateClosestGraspable");
             UpdateClosestGraspable();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateInteractions");
             UpdateInteractions();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateHovering");
             UpdateHovering();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateVisibilityAndColliders");
             UpdateVisibilityAndColliders();
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         protected void UpdateHovering()
