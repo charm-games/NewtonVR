@@ -500,7 +500,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
             // Once tracking is established, the HMD gets moved around based on
             // inaccurate camera data. Call Recenter to reset it to the rig origin 
-            InputTracking.Recenter();
+            Recenter();
 
             trackingInitialized = true;
 
