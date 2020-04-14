@@ -37,10 +37,12 @@ namespace NewtonVR
         private static bool hasOculusSDK = false;
         private static bool hasSteamVR = false;
         private static bool hasWindowsMR = false;
+        private static bool hasPSVR = false;
 
         private static bool hasOculusSDKDefine = false;
         private static bool hasSteamVRDefine = false;
         private static bool hasWindowsMRDefine = false;
+        private static bool hasPSVRDefine = false;
 
         private static string progressBarMessage = null;
 
@@ -59,11 +61,14 @@ namespace NewtonVR
 
             hasWindowsMR = true;
 
+            hasPSVR = true;
+
             string scriptingDefine = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone);
             string[] scriptingDefines = scriptingDefine.Split(';');
             hasOculusSDKDefine = scriptingDefines.Contains(OculusDefine);
             hasSteamVRDefine = scriptingDefines.Contains(SteamVRDefine);
             hasWindowsMRDefine = true;
+            hasPSVRDefine = true;
 
             waitingForReload = false;
             ClearProgressBar();
@@ -190,6 +195,7 @@ namespace NewtonVR
             player.OculusSDKEnabled = hasOculusSDKDefine;
             player.SteamVREnabled = hasSteamVRDefine;
             player.WindowsMREnabled = hasWindowsMRDefine;
+            player.PSVREnabled = hasPSVRDefine;
 
             bool installSteamVR = false;
             bool installOculusSDK = false;
@@ -260,6 +266,7 @@ namespace NewtonVR
                 player.OverrideOculus = false;
                 player.OverrideSteamVR = false;
                 player.OverrideWindowsMR = false;
+                player.OverridePSVR = false;
             }
             if (player.OverrideAll != modelOverrideAll)
             {
@@ -375,6 +382,41 @@ namespace NewtonVR
                 GUILayout.Space(10);
             }
 
+            if (player.PSVREnabled == true)
+            {
+                GUILayout.Label("Model override for PSVR");
+                using (new EditorGUI.DisabledScope(hasPSVR == false))
+                {
+                    bool modelOverridePSVR = EditorGUILayout.Toggle("Override hand models for PSVR", player.OverridePSVR);
+                    EditorGUILayout.BeginFadeGroup(Convert.ToSingle(modelOverridePSVR));
+                    using (new EditorGUI.DisabledScope(modelOverridePSVR == false))
+                    {
+                        player.OverridePSVRLeftHand = (GameObject)EditorGUILayout.ObjectField("Left Hand", player.OverridePSVRLeftHand, typeof(GameObject), false);
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Space(20);
+                        player.OverridePSVRLeftHandPhysicalColliders = (GameObject)EditorGUILayout.ObjectField("Left Hand Physical Colliders", player.OverridePSVRLeftHandPhysicalColliders, typeof(GameObject), false);
+                        GUILayout.EndHorizontal();
+                        player.OverridePSVRRightHand = (GameObject)EditorGUILayout.ObjectField("Right Hand", player.OverridePSVRRightHand, typeof(GameObject), false);
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Space(20);
+                        player.OverridePSVRRightHandPhysicalColliders = (GameObject)EditorGUILayout.ObjectField("Right Hand Physical Colliders", player.OverridePSVRRightHandPhysicalColliders, typeof(GameObject), false);
+                        GUILayout.EndHorizontal();
+                    }
+                    EditorGUILayout.EndFadeGroup();
+
+                    if (modelOverridePSVR == true)
+                    {
+                        player.OverrideAll = false;
+                    }
+                    if (player.OverridePSVR != modelOverridePSVR)
+                    {
+                        EditorUtility.SetDirty(target);
+                        player.OverridePSVR = modelOverridePSVR;
+                    }
+                }
+
+                GUILayout.Space(10);
+            }
 
             GUILayout.Space(10);
 

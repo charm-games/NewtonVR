@@ -139,6 +139,18 @@ namespace NewtonVR
             }
         }
 
+        public bool IsInputDeviceInitialized
+        {
+            get
+            {
+                if (InputDevice != null) {
+                    return InputDevice.IsInitialized;
+                }
+
+                return false;
+            }
+        }
+
 
         public virtual void PreInitialize(NVRPlayer player)
         {
@@ -233,9 +245,31 @@ namespace NewtonVR
                     }
                 }
             }
+            else if (Player.CurrentIntegrationType == NVRSDKIntegrations.PSVR)
+            {
+                InputDevice = this.gameObject.AddComponent<NVRPSVRInputDevice>();
+
+                if (Player.OverridePSVR == true)
+                {
+                    if (IsLeft)
+                    {
+                        CustomModel = Player.OverridePSVRLeftHand;
+                        CustomPhysicalColliders = Player.OverridePSVRLeftHandPhysicalColliders;
+                    }
+                    else if (IsRight)
+                    {
+                        CustomModel = Player.OverridePSVRRightHand;
+                        CustomPhysicalColliders = Player.OverridePSVRRightHandPhysicalColliders;
+                    }
+                    else
+                    {
+                        Debug.LogError("[NewtonVR] Error: Unknown hand for PSVR model override.");
+                    }
+                }
+            }
             else
             {
-                //Debug.LogError("[NewtonVR] Critical Error: NVRPlayer.CurrentIntegration not setup.");
+                Debug.LogError("[NewtonVR] Critical Error in NVRHand: NVRPlayer.CurrentIntegration not setup.");
                 return;
             }
 
@@ -291,6 +325,7 @@ namespace NewtonVR
 
         protected virtual void Update()
         {
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - Initialization");
             if (CurrentHandState == HandState.Uninitialized)
             {
                 if (InputDevice == null || InputDevice.ReadyToInitialize() == false)
@@ -303,30 +338,47 @@ namespace NewtonVR
                     return;
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateButtonStates");
             UpdateButtonStates();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateClosestGraspable");
             UpdateClosestGraspable();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateInteractions");
             UpdateInteractions();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateHovering");
             UpdateHovering();
+            UnityEngine.Profiling.Profiler.EndSample();
 
+            UnityEngine.Profiling.Profiler.BeginSample("NVRHand.Update - UpdateVisibilityAndColliders");
             UpdateVisibilityAndColliders();
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         protected void UpdateHovering()
         {
             if (CurrentHandState == HandState.Idle)
             {
-                var hoveringEnumerator = CurrentlyHoveringOver.GetEnumerator();
-                while (hoveringEnumerator.MoveNext())
-                {
-                    var hoveringOver = hoveringEnumerator.Current;
-                    if (hoveringOver.Value.Count > 0)
-                    {
-                        hoveringOver.Key.HoveringUpdate(this, Time.time - hoveringOver.Value.OrderBy(colliderTime => colliderTime.Value).First().Value);
+                foreach (var hoveringOver in CurrentlyHoveringOver) {
+                    NVRInteractable hoveringOverInteractable = hoveringOver.Key;
+                    var hoverInstanceColliders = hoveringOver.Value;
+
+                    // Find the oldest collider time
+                    float oldestHoverTime = Mathf.Infinity;
+                    foreach (var collisionInstance in hoverInstanceColliders) {
+                        float hoverTime = collisionInstance.Value;
+                        if (hoverTime < oldestHoverTime) {
+                            oldestHoverTime = hoverTime;
+                        }
                     }
+
+                    hoveringOverInteractable.HoveringUpdate(this, Time.time - oldestHoverTime);
                 }
             }
         }

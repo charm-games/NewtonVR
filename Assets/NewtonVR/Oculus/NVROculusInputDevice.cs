@@ -21,6 +21,8 @@ namespace NewtonVR
         private Dictionary<NVRButtons, OVRInput.Axis1D> TriggerMapping = new Dictionary<NVRButtons, OVRInput.Axis1D>(new NVRButtonsComparer());
         private Dictionary<NVRButtons, OVRInput.Axis2D> StickMapping = new Dictionary<NVRButtons, OVRInput.Axis2D>(new NVRButtonsComparer());
 
+        private bool isInitialized = false;
+
         public override void Initialize(NVRHand hand)
         {
             base.Initialize(hand);
@@ -36,6 +38,7 @@ namespace NewtonVR
                 Controller = OVRInput.Controller.RTouch;
             }
             
+            isInitialized = true;
         }
 
         protected virtual void SetupButtonMapping()
@@ -199,6 +202,13 @@ namespace NewtonVR
             }
         }
 
+        public override bool IsInitialized
+        {
+            get
+            {
+                return isInitialized;
+            }
+        }
 
         public override GameObject SetupDefaultRenderModel()
         {
@@ -288,6 +298,14 @@ namespace NewtonVR
     public class NVROculusInputDevice : NVRInputDevice
     {
         public override bool IsCurrentlyTracked
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override bool IsInitialized
         {
             get
             {

@@ -17,6 +17,7 @@ namespace NewtonVR
         }
 
         public abstract bool IsCurrentlyTracked { get; }
+        public abstract bool IsInitialized { get; }
 
         public abstract Collider[] SetupDefaultPhysicalColliders(Transform ModelParent);
 

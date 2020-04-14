@@ -28,6 +28,8 @@ namespace NewtonVR
         public bool OculusSDKEnabled = false;
         [HideInInspector]
         public bool WindowsMREnabled = false;
+        [HideInInspector]
+        public bool PSVREnabled = false;
 
         public InterationStyle InteractionStyle;
         public bool PhysicalHands = true;
@@ -35,8 +37,6 @@ namespace NewtonVR
         public bool AutomaticallySetControllerTransparency = true;
         public bool VibrateOnHover = true;
         public int VelocityHistorySteps = 3;
-
-        public UnityEvent OnInitialized;
 
         [Space]
         public bool EnableEditorPlayerPreview = true;
@@ -140,6 +140,17 @@ namespace NewtonVR
         [HideInInspector]
         public GameObject OverrideWindowsMRRightHandPhysicalColliders;
 
+        [HideInInspector]
+        public bool OverridePSVR;
+        [HideInInspector]
+        public GameObject OverridePSVRLeftHand;
+        [HideInInspector]
+        public GameObject OverridePSVRLeftHandPhysicalColliders;
+        [HideInInspector]
+        public GameObject OverridePSVRRightHand;
+        [HideInInspector]
+        public GameObject OverridePSVRRightHandPhysicalColliders;
+
         [Space]
 
         public NVRHead Head;
@@ -153,7 +164,7 @@ namespace NewtonVR
         public NVRSDKIntegrations CurrentIntegrationType = NVRSDKIntegrations.None;
 
         protected NVRIntegration Integration;
-        protected event Action onIntegrationInitialized;
+        protected static event Action onIntegrationInitialized;
 
         private Dictionary<Collider, NVRHand> ColliderToHandMapping;
 
@@ -165,6 +176,21 @@ namespace NewtonVR
 
         public bool AutoSetFixedDeltaTime = true;
         public bool NotifyOnVersionUpdate = true;
+
+        public int NumInitializedInputDevices
+        {
+            get
+            {
+                int numInitializedInputDevices = 0;
+                foreach (NVRHand hand in Hands) {
+                    if (hand.IsInputDeviceInitialized) {
+                        numInitializedInputDevices++;
+                    }
+                }
+
+                return numInitializedInputDevices;
+            }
+        }
 
         protected void Awake()
         {
@@ -205,11 +231,6 @@ namespace NewtonVR
             if (Integration != null)
             {
                 Integration.Initialize(this);
-            }
-
-            if (OnInitialized != null)
-            {
-                OnInitialized.Invoke();
             }
         }
 
@@ -264,11 +285,17 @@ namespace NewtonVR
             NVRSDKIntegrations currentIntegration = NVRSDKIntegrations.None;
             string resultLog = "[NewtonVR] Version : " + NewtonVRVersion + ". ";
 
+#if UNITY_PS4
+            // PSVR
+            currentIntegration = NVRSDKIntegrations.PSVR;
+            resultLog += "Using PSVR SDK";
+#endif // UNITY_PS4
+
             if (UnityEngine.XR.XRDevice.isPresent == true)
             {
                 resultLog += "Found VRDevice: " + UnityEngine.XR.XRDevice.model + ". ";
 
-#if !NVR_Oculus && !NVR_SteamVR
+#if !NVR_Oculus && !NVR_SteamVR && !UNITY_PS4 && !UNITY_WSA
                 string warning = "Neither SteamVR or Oculus SDK is enabled in the NVRPlayer. Please check the \"Enable SteamVR\" or \"Enable Oculus SDK\" checkbox in the NVRPlayer script in the NVRPlayer GameObject.";
                 Debug.LogWarning(warning);
 #endif
@@ -331,11 +358,11 @@ namespace NewtonVR
             }
         }
 
-        public void AddOnIntegrationInitializedListener(Action callback) {
+        public static void AddOnIntegrationInitializedListener(Action callback) {
             onIntegrationInitialized += callback;
         }
 
-        public void RemoveOnIntegrationInitializedListener(Action callback) {
+        public static void RemoveOnIntegrationInitializedListener(Action callback) {
             onIntegrationInitialized -= callback;
         }
 
@@ -370,6 +397,7 @@ namespace NewtonVR
         {
             Integration.DeInitialize();
             Instances.Remove(this);
+            Integration.DeInitialize();
         }
 
         private void Update()

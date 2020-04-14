@@ -78,5 +78,9 @@ namespace NewtonVR
         public abstract Matrix4x4 GetEyeProjectionMatrix(XRNode eye,
                                                          float  nearZ,
                                                          float  farZ);
+
+        public virtual void Update()
+        {
+        }
     }
 }
