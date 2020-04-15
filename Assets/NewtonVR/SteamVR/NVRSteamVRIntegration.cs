@@ -280,10 +280,6 @@ namespace NewtonVR
         {
         }
 
-        public override void MoveRig(Vector3 position, Quaternion orientation)
-        {
-        }
-
         //--------------------------------------------------------------------------
 
         public override void MoveRig(Vector3 position, Quaternion orientation)

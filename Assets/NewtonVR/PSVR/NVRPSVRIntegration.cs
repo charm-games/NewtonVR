@@ -238,7 +238,7 @@ public class NVRPSVRIntegration : NVRIntegration
 
         // TODO: If we move to Unity 2018.1 or greater then use the
         // XRDevice.deviceLoaded event instead of this
-        CharmGames.Form.DelayedCallback.FrameDelayedCallback(OnHMDLoaded, 1);
+        CharmGames.Core.DelayedCallback.FrameDelayedCallback(OnHMDLoaded, 1);
     }
 
     //--------------------------------------------------------------------------
@@ -292,7 +292,7 @@ public class NVRPSVRIntegration : NVRIntegration
         //// then reset the Main Camera's FOV and Aspect
         //// TODO: If we move to Unity 2018.1 or greater then use the
         //// XRDevice.deviceLoaded event instead of this
-        CharmGames.Form.DelayedCallback.FrameDelayedCallback(OnHMDUnloaded, 1);
+        CharmGames.Core.DelayedCallback.FrameDelayedCallback(OnHMDUnloaded, 1);
     }
 
     //--------------------------------------------------------------------------
@@ -360,7 +360,7 @@ public class NVRPSVRIntegration : NVRIntegration
     {
         Debug.LogFormat("NVRPSVRIntegration.OnSystemServiceEvent: {0}", eventType);
 
-        if (eventType == Utility.sceSystemServiceEventType.RESET_VR_POSITION) {
+        if (eventType == Utility.sceSystemServiceEventType.ResetVrPosition) {
             Recenter();
         }
     }
