@@ -125,14 +125,14 @@ public class NVRPSVRIntegration : NVRIntegration
 
     public override void RegisterNewPoseCallback(UnityAction callback)
     {
-        // TODO: Not sure what event to hook this to
+        NewPosesCallbacks.Add(callback); 
     }
 
     //--------------------------------------------------------------------------
 
     public override void DeregisterNewPoseCallback(UnityAction callback)
     {
-        // TODO: Not sure what event to hook this to
+        NewPosesCallbacks.Remove(callback);
     }
 
     //--------------------------------------------------------------------------
@@ -210,6 +210,8 @@ public class NVRPSVRIntegration : NVRIntegration
     public override void Update()
     {
         UpdateTracking();
+
+        UpdatePoseCallbacks();
     }
 
     //--------------------------------------------------------------------------
@@ -508,6 +510,17 @@ public class NVRPSVRIntegration : NVRIntegration
         }
 
 #endif // UNITY_PS4
+    }
+
+    //--------------------------------------------------------------------------
+
+    private void UpdatePoseCallbacks()
+    {
+        // Since we don't have a pose update callback in PSVR we fake it with an
+        // update loop callback
+        foreach (UnityAction action in NewPosesCallbacks) {
+            action();
+        }
     }
 
     //--------------------------------------------------------------------------
