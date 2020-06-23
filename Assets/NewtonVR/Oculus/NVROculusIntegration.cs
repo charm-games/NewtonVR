@@ -184,6 +184,14 @@ namespace NewtonVR
 
         //--------------------------------------------------------------------------
 
+        public override void RotateRig(Quaternion localRotation)
+        {
+            // Apply the rotation additively
+            Player.transform.localRotation = Player.transform.localRotation * localRotation;
+        }
+
+        //--------------------------------------------------------------------------
+
         public override Transform GetOrigin()
         {
             return Player.transform;
@@ -265,6 +273,10 @@ namespace NewtonVR
         }
 
         public override void MoveRig(Vector3 position, Quaternion orientation)
+        {
+        }
+
+        public override void RotateRig(Quaternion localRotation)
         {
         }
 

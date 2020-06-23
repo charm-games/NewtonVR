@@ -154,6 +154,14 @@ public class NVRPSVRIntegration : NVRIntegration
 
     //--------------------------------------------------------------------------
 
+    public override void RotateRig(Quaternion localRotation)
+    {
+        // Apply the rotation additively
+        Player.transform.localRotation = Player.transform.localRotation * localRotation;
+    }
+
+    //--------------------------------------------------------------------------
+
     public override Transform GetOrigin()
     {
         return rigObj.transform;

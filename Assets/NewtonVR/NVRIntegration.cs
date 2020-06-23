@@ -70,7 +70,9 @@ namespace NewtonVR
         public abstract void MoveRig(Transform transform);
 
         public abstract void MoveRig(Vector3 position, Quaternion orientation);
-    
+
+        public abstract void RotateRig(Quaternion localRotation);
+
         public abstract Transform GetOrigin();
 
         public abstract Vector3 GetEyeOffset(XRNode eye);
