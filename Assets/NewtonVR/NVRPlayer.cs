@@ -5,6 +5,7 @@ using UnityEngine.VR;
 using System.Linq;
 using UnityEngine.Events;
 using System;
+using CharmGames.Core;
 
 namespace NewtonVR
 {
@@ -170,7 +171,7 @@ namespace NewtonVR
 
         [Space]
 
-        public bool DEBUGEnableFallback2D = false;
+        public bool DEBUGEnableFallback2D = true;
         public bool DEBUGDropFrames = false;
         public int DEBUGSleepPerFrame = 13;
 
@@ -251,8 +252,8 @@ namespace NewtonVR
                 if (logOutput == true)
                 {
                     //Debug.LogError("[NewtonVR] Fallback non-vr not yet implemented.");
-                    SetupFallbackNonVRIntegration();
                 }
+                SetupFallbackNonVRIntegration();
                 return;
             }
             else
@@ -277,7 +278,7 @@ namespace NewtonVR
 
         protected virtual void SetupFallbackNonVRIntegration()
         {
-            // Override this in your custom rig implementation
+            Integration = new MockVRIntegration();
         }
 
         protected virtual NVRSDKIntegrations DetermineCurrentIntegration(bool logOutput = true)
@@ -307,6 +308,10 @@ namespace NewtonVR
                     resultLog += "Using Oculus SDK";
                 }
 #endif
+                if (currentIntegration == NVRSDKIntegrations.None && UnityEngine.XR.XRSettings.loadedDeviceName == "MockHMD") {
+                    currentIntegration = NVRSDKIntegrations.FallbackNonVR;
+                    resultLog += "Using FallbackNonVR";
+                }
 
 #if NVR_SteamVR
                 if (currentIntegration == NVRSDKIntegrations.None)
@@ -323,18 +328,6 @@ namespace NewtonVR
                 }
 #endif // UNITY_WSA
 
-            }
-
-            if (currentIntegration == NVRSDKIntegrations.None)
-            {
-                if (DEBUGEnableFallback2D == true)
-                {
-                    currentIntegration = NVRSDKIntegrations.FallbackNonVR;
-                }
-                else
-                {
-                    resultLog += "Did not find supported VR device. Or no integrations enabled.";
-                }
             }
 
             if (logOutput == true)
