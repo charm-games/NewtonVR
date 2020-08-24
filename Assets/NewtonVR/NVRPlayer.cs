@@ -37,8 +37,6 @@ namespace NewtonVR
         public bool VibrateOnHover = true;
         public int VelocityHistorySteps = 3;
 
-        public UnityEvent OnInitialized;
-
         [Space]
         public bool EnableEditorPlayerPreview = true;
         public Mesh EditorPlayerPreview;
@@ -206,11 +204,6 @@ namespace NewtonVR
             if (Integration != null)
             {
                 Integration.Initialize(this);
-            }
-
-            if (OnInitialized != null)
-            {
-                OnInitialized.Invoke();
             }
         }
 
