@@ -317,7 +317,6 @@ public class NVRPSVRIntegration : NVRIntegration
 #if UNITY_PS4
         // Unregister the callbacks needed to detect resetting the HMD
         UnsubscribeFromServiceAndDeviceEvents();
-        PlayStationVR.SetOutputModeHMD(false, 120);
 #endif
 
         Camera.main.fieldOfView = 60f;
