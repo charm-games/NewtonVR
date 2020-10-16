@@ -13,7 +13,7 @@ namespace NewtonVR
         public bool EnableKinematicOnDetach = false;
         public float DropDistance = 1;
 
-        public bool EnableGravityOnDetach = true;
+        public bool EnableGravityOnDetach = false;
 
         public NVRHand AttachedHand = null;
         public int GraspTargetCount = 0;
