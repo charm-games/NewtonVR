@@ -29,6 +29,26 @@ namespace NewtonVR
             }
         }
 
+        public virtual void AddOnDeviceConnectedListener(UnityAction callback)
+        {
+            // no op
+        }
+
+        public virtual void RemoveOnDeviceConnectedListener(UnityAction callback)
+        {
+            // no op
+        }
+
+        public virtual List<string> GetConnectedControllerDevices()
+        {
+            List<string> controllerDeviceNames
+                = new List<string>();
+
+            controllerDeviceNames.AddRange(UnityEngine.Input.GetJoystickNames());
+            
+            return controllerDeviceNames;
+        }
+
         public abstract void DontDestroyOnLoad();
 
         public abstract void Initialize(NVRPlayer player);
@@ -50,7 +70,9 @@ namespace NewtonVR
         public abstract void MoveRig(Transform transform);
 
         public abstract void MoveRig(Vector3 position, Quaternion orientation);
-    
+
+        public abstract void RotateRig(Quaternion localRotation);
+
         public abstract Transform GetOrigin();
 
         public abstract Vector3 GetEyeOffset(XRNode eye);
@@ -58,5 +80,9 @@ namespace NewtonVR
         public abstract Matrix4x4 GetEyeProjectionMatrix(XRNode eye,
                                                          float  nearZ,
                                                          float  farZ);
+
+        public virtual void Update()
+        {
+        }
     }
 }
