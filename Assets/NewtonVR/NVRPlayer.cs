@@ -193,7 +193,7 @@ namespace NewtonVR
             }
         }
 
-        protected void Awake()
+        protected virtual void Awake()
         {
             if (AutoSetFixedDeltaTime)
             {
@@ -398,7 +398,7 @@ namespace NewtonVR
             Integration.DeInitialize();
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (DEBUGDropFrames == true)
             {
