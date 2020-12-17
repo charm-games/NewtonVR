@@ -1,0 +1,5 @@
+Release notes - CharmGames NewtonVR - Version 1.0.0
+
+* Initial release of package
+* Rig extensions for PSVR
+
