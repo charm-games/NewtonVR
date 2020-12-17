@@ -1,0 +1,15 @@
+{
+  "name": "com.charmgames.newtonvr",
+  "version": "1.0.0",
+  "displayName": "NewtonVR",
+  "description": "This package contains the Charm Games modified version of NewtonVR.",
+ "keywords": [
+    "newtonvr",
+    "newton"
+  ],
+  "author": {
+    "name": "Charm Games",
+    "email": "info@charmgames.com",
+    "url": "https://www.charmgames.com"
+  }
+}
